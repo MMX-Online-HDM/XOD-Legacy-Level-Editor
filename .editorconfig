@@ -1,0 +1,9 @@
+###############################
+# Core EditorConfig Options   #
+###############################
+root = true
+# All files
+[*]
+charset = utf-8
+indent_style = tab
+insert_final_newline = true
