@@ -7,7 +7,9 @@
 	"private": true,
 	"scripts": {
 		"start": "electron-forge start",
+		"start-le": "electron-forge start -- levelEditor",
 		"package": "electron-forge package",
+		"package_x86": "electron-forge package --arch=ia32",
 		"make": "electron-forge make",
 		"publish": "electron-forge publish",
 		"lint": "eslint --ext .ts,.tsx ."
