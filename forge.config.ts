@@ -8,11 +8,14 @@ import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 
-import { mainConfig } from './webpack.main.config';
-import { rendererConfig } from './webpack.renderer.config';
+import { mainConfig } from './webpack/webpack.main.config';
+import { rendererConfig } from './webpack/webpack.renderer.config';
 
 const config: ForgeConfig = {
 	packagerConfig: {
+		name: "MMXOD Editor",
+		executableName: "MMXOD_Sprite_Editor",
+		icon: "favicon.ico",
 		asar: true,
 	},
 	rebuildConfig: {},
@@ -31,7 +34,7 @@ const config: ForgeConfig = {
 				entryPoints: [
 					{
 						html: './src/index.html',
-						js: './src/renderer.ts',
+						js: './src/renderer.tsx',
 						name: 'main_window',
 						preload: {
 							js: './src/preload.ts',
@@ -39,6 +42,7 @@ const config: ForgeConfig = {
 					},
 				],
 			},
+			devContentSecurityPolicy: "",
 		}),
 		// Fuses are used to enable/disable various Electron functionality
 		// at package time, before code signing the application

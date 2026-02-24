@@ -25,9 +25,23 @@
  *  });
  * ```
  */
+import 'reflect-metadata';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { SpriteEditor } from './spriteEditor/spriteEditor';
+import { LevelEditor } from './levelEditor/levelEditor';
+import "./index.css";
 
-import './index.css';
+async function start() {
+	let type: number = await window.Main.getEditorType();
+	const root = createRoot(document.getElementById("root") as HTMLElement);
 
-console.log(
-	'👋 This message is being logged by "renderer.js", included via webpack',
-);
+	if (type === 0) {
+		root.render(<SpriteEditor />,);
+	}
+	else {
+		root.render(<LevelEditor />,);
+	}
+}
+
+start();

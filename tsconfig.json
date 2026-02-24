@@ -1,19 +1,32 @@
 {
 	"compilerOptions": {
-		"target": "ES6",
+		// Defaults.
+		//"target": "ES6",
 		"allowJs": true,
-		"module": "commonjs",
 		"skipLibCheck": true,
 		"esModuleInterop": true,
-		"noImplicitAny": true,
+		//"noImplicitAny": true,
 		"sourceMap": true,
+		"strict": true,
 		"baseUrl": ".",
 		"outDir": "dist",
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"paths": {
 			"*": ["node_modules/*"]
-		}
+		},
+		// Custom stuff.
+		"noImplicitAny": false,
+		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
+		"target": "ESNext",
+		"module": "ESNext",
+		"isolatedModules": true,
+		"noEmit": true,
+		"strictNullChecks": false,
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react-jsx",
+		"experimentalDecorators": true,
 	},
 	"include": ["src/**/*"]
 }
