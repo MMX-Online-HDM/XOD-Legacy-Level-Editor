@@ -27,31 +27,31 @@ class Global {
 
 		new Obj("Ladder", true, "yellow", "", 6),
 
-		new Obj("Spawn Point", false, "", "images/spawnPoint.png", 7),
-		new Obj("Red Spawn", false, "", "images/redSpawnPoint.png", 8),
-		new Obj("Blue Spawn", false, "", "images/blueSpawnPoint.png", 9),
+		new Obj("Spawn Point", false, "", "resources/images/spawnPoint.png", 7),
+		new Obj("Red Spawn", false, "", "resources/images/redSpawnPoint.png", 8),
+		new Obj("Blue Spawn", false, "", "resources/images/blueSpawnPoint.png", 9),
 
-		new Obj("Red Flag", false, "", "images/redFlag.png", 10),
-		new Obj("Blue Flag", false, "", "images/blueFlag.png", 11),
-		new Obj("Control Point", false, "", "images/controlPoint.png", 12),
+		new Obj("Red Flag", false, "", "resources/images/redFlag.png", 10),
+		new Obj("Blue Flag", false, "", "resources/images/blueFlag.png", 11),
+		new Obj("Control Point", false, "", "resources/images/controlPoint.png", 12),
 
-		new Obj("Large Health", false, "", "images/largeHealth.png", 13),
-		new Obj("Small Health", false, "", "images/smallHealth.png", 14),
-		new Obj("Large Ammo", false, "", "images/largeAmmo.png", 15),
-		new Obj("Small Ammo", false, "", "images/smallAmmo.png", 16),
+		new Obj("Large Health", false, "", "resources/images/largeHealth.png", 13),
+		new Obj("Small Health", false, "", "resources/images/smallHealth.png", 14),
+		new Obj("Large Ammo", false, "", "resources/images/largeAmmo.png", 15),
+		new Obj("Small Ammo", false, "", "resources/images/smallAmmo.png", 16),
 
-		new Obj("Ride Armor", false, "", "images/rideArmor.png", 17),
-		new Obj("Ride Chaser", false, "", "images/rideChaser.png", 18),
+		new Obj("Ride Armor", false, "", "resources/images/rideArmor.png", 17),
+		new Obj("Ride Chaser", false, "", "resources/images/rideChaser.png", 18),
 
-		new Obj("Node", false, "", "images/graph_node.png", 19),
+		new Obj("Node", false, "", "resources/images/graph_node.png", 19),
 
-		new Obj("Map Sprite", false, "", "images/mapSpritePlaceholder.png", 19),
-		new Obj("Moving Platform", false, "", "images/mapSpritePlaceholder.png", 19.5),
-		new Obj("Music Source", false, "", "images/musicSource.png", 19.75),
+		new Obj("Map Sprite", false, "", "resources/images/mapSpritePlaceholder.png", 19),
+		new Obj("Moving Platform", false, "", "resources/images/mapSpritePlaceholder.png", 19.5),
+		new Obj("Music Source", false, "", "resources/images/musicSource.png", 19.75),
 
-		new Obj("Jape Memorial", false, "", "images/japeMemorial.png", 20),
+		new Obj("Jape Memorial", false, "", "resources/images/japeMemorial.png", 20),
 
-		new Obj("Goal", false, "", "images/victoryPoint.png", 21),
+		new Obj("Goal", false, "", "resources/images/victoryPoint.png", 21),
 		new Obj("Gate", true, "purple", "", 22),
 
 	];

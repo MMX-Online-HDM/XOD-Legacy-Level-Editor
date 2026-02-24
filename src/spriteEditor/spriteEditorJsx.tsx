@@ -250,12 +250,12 @@ function renderSpritesheetCanvas(t: SpriteEditor): JSX.Element {
 									duration: <NumberInput initialValue={frame.getDurationInFrames()} onSubmit={num => { frame.setDurationFromFrames(num); t.csssd(); }} />&nbsp;
 									x-off: <NumberInput initialValue={frame.offset.x} onSubmit={num => { frame.offset.x = num; t.csssd(); }} />&nbsp;
 									y-off: <NumberInput initialValue={frame.offset.y} onSubmit={num => { frame.offset.y = num; t.csssd(); }} />&nbsp;
-									<button title="Move Up" onClick={e => { e.stopPropagation(); t.moveFrame(index, -1); }}><img src="file:///images/moveup.png" /></button>
-									<button title="Move Down" onClick={e => { e.stopPropagation(); t.moveFrame(index, 1); }}><img src="file:///images/movedown.png" /></button>
-									<button title="Copy Up" onClick={e => { e.stopPropagation(); t.copyFrame(index, -1); }}><img src="file:///images/copyup.png" /></button>
-									<button title="Copy Down" onClick={e => { e.stopPropagation(); t.copyFrame(index, 1); }}><img src="file:///images/copydown.png" /></button>
-									<button title="Replace frame with current selection" onClick={e => { e.stopPropagation(); t.addPendingFrame(index); }}><img src="file:///images/overwrite.png" /></button>
-									<button title="Delete" onClick={e => { e.stopPropagation(); t.deleteFrame(index); }}><img src="file:///images/delete.png" /></button>
+									<button title="Move Up" onClick={e => { e.stopPropagation(); t.moveFrame(index, -1); }}><img src="file:///resources/images/moveup.png" /></button>
+									<button title="Move Down" onClick={e => { e.stopPropagation(); t.moveFrame(index, 1); }}><img src="file:///resources/images/movedown.png" /></button>
+									<button title="Copy Up" onClick={e => { e.stopPropagation(); t.copyFrame(index, -1); }}><img src="file:///resources/images/copyup.png" /></button>
+									<button title="Copy Down" onClick={e => { e.stopPropagation(); t.copyFrame(index, 1); }}><img src="file:///resources/images/copydown.png" /></button>
+									<button title="Replace frame with current selection" onClick={e => { e.stopPropagation(); t.addPendingFrame(index); }}><img src="file:///resources/images/overwrite.png" /></button>
+									<button title="Delete" onClick={e => { e.stopPropagation(); t.deleteFrame(index); }}><img src="file:///resources/images/delete.png" /></button>
 									&nbsp;frame rect:&nbsp;
 									<NumberInput initialValue={frame.rect.topLeftPoint.x} onSubmit={num => { frame.rect.topLeftPoint.x = num; t.csssd(); }} />
 									<NumberInput initialValue={frame.rect.topLeftPoint.y} onSubmit={num => { frame.rect.topLeftPoint.y = num; t.csssd(); }} />

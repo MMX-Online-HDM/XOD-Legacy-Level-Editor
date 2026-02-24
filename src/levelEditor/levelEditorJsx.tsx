@@ -341,7 +341,7 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 													&nbsp;&nbsp;
 													y: <NumberInput initialValue={point.y} onSubmit={num => { point.y = num; t.cssld(); }} />
 													{state.selectedInstances[0].points.length >= 4 &&
-														<button title="Delete" onClick={e => { state.selectedInstances[0].points.splice(index, 1); t.cssld(); }}><img src="file:///images/delete.png" /></button>
+														<button title="Delete" onClick={e => { state.selectedInstances[0].points.splice(index, 1); t.cssld(); }}><img src="file:///resources/images/delete.png" /></button>
 													}
 												</div>
 											))

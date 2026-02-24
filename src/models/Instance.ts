@@ -14,7 +14,7 @@ import { NavMeshNode } from "./NavMeshNode";
 import { MirrorEnabled } from "../enums";
 import { Line } from "./Line";
 
-const ICON_WIDTH = 20;
+const ICON_WIDTH = 16;
 
 export class Instance {
 	// Common

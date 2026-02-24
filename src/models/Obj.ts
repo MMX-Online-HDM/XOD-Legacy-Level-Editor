@@ -8,11 +8,17 @@ export class Obj {
 	imgEl: HTMLImageElement;
 	zIndex: number;
 	exclusiveMap: string;
-	constructor(name: string, isShape: boolean, color: string, imageFileName: string, zIndex: number) {
+	center: boolean;
+
+	constructor(
+		name: string, isShape: boolean, color: string,
+		imageFileName: string, zIndex: number, center: boolean = false
+	) {
 		this.name = name;
 		this.isShape = isShape;
 		this.color = color;
 		this.zIndex = zIndex;
+		this.center = center;
 		if (imageFileName) {
 			this.imgEl = document.createElement("img");
 			this.imgEl.src = "file:///" + imageFileName;

@@ -30,7 +30,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { SpriteEditor } from './spriteEditor/spriteEditor';
 import { LevelEditor } from './levelEditor/levelEditor';
-import "./index.css";
 
 async function start() {
 	let type: number = await window.Main.getEditorType();
