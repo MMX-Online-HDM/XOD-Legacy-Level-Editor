@@ -43,6 +43,7 @@ export class LevelEditorState {
 	showForeground: boolean = true;
 	showParallaxes: boolean = true;
 	snapCollision: boolean = false;
+	snapSize: number = 8;
 	showWallPaths: boolean = false;
 
 	get selectedInstances(): Instance[] {
@@ -122,8 +123,8 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 	input: LevelEditorInput;
 	sprites: Sprite[] = [];
 
-	canvasWidth = 1100;
-	canvasHeight = 606;
+	get canvasWidth() { return window.innerWidth };
+	get canvasHeight() { return window.innerWidth };
 
 	hiddenCanvas: HTMLCanvasElement;
 	hiddenCtx: CanvasRenderingContext2D;
@@ -172,8 +173,8 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 			this.config = plainToClass(Config, configData);
 			this.data.levelFilter = this.config.lastLevelFilter || "";
 			this.data.selectedFilterMode = this.config.lastLevelFilterMode || "contains";
-			this.canvasWidth = this.config.mapCanvasWidth || 1100;
-			this.canvasHeight = this.config.mapCanvasHeight || 606;
+			//this.canvasWidth = this.config.mapCanvasWidth || 1100;
+			//this.canvasHeight = this.config.mapCanvasHeight || 606;
 			this.setZoom(this.config.lastMapZoom || 1);
 			this.setOptimizedMode(this.config.optimizedMode, true);
 
@@ -426,24 +427,6 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 		this.forceUpdate();
 		this.config.lastMapZoom = zoomLevel;
 		this.saveConfig();
-	}
-
-	changeCanvasWidth(width: number) {
-		this.canvasWidth = width;
-		this.levelCanvas.changeCanvasSize();
-		this.forceUpdate();
-		this.config.mapCanvasWidth = width;
-		this.saveConfig();
-		setTimeout(() => this.redraw(), 100);
-	}
-
-	changeCanvasHeight(height: number) {
-		this.canvasHeight = height;
-		this.levelCanvas.changeCanvasSize();
-		this.forceUpdate();
-		this.config.mapCanvasHeight = height;
-		this.saveConfig();
-		setTimeout(() => this.redraw(), 100);
 	}
 
 	switchTool(newTool: Tool) {

@@ -14,8 +14,6 @@ import { NavMeshNode } from "./NavMeshNode";
 import { MirrorEnabled } from "../enums";
 import { Line } from "./Line";
 
-const ICON_WIDTH = 16;
-
 export class Instance {
 	// Common
 	@Expose() name: string;
@@ -184,7 +182,9 @@ export class Instance {
 	}
 
 	drawShapeInstance(ctx: CanvasRenderingContext2D) {
-		DrawWrappers.drawPolygon(ctx, new Shape(this.points), true, this.obj.color, "", undefined, 0.5);
+		DrawWrappers.drawPolygon(
+			ctx, new Shape(this.points), true, this.obj.color, "", 0, 0.2
+		);
 	}
 
 	drawMapSpriteInstance(ctx: CanvasRenderingContext2D, viewPort: Rect) {
@@ -211,21 +211,24 @@ export class Instance {
 	}
 
 	drawNonShapeInstance(ctx: CanvasRenderingContext2D) {
-		let xOff = 0;
-		let yOff = 0;
-		if (this.objectName.endsWith(" Flag")) {
-			xOff = 10;
+		// Default offset.
+		let xOff = -this.obj.iconSize[0] / 2;
+		let yOff = -this.obj.iconSize[1];
+		// For things that spawn centered.
+		if (this.obj.center) {
+			yOff = -this.obj.iconSize[1] / 2;
 		}
+		// Draw the actual icon.
 		ctx.drawImage(
 			this.obj.imgEl,
 			Math.round(0), //source x
 			Math.round(0), //source y
 			Math.round(this.obj.imgEl.width), //source width
 			Math.round(this.obj.imgEl.height), //source height
-			Math.round(this.pos.x + xOff - ICON_WIDTH / 2),  //dest x
-			Math.round(this.pos.y + yOff - ICON_WIDTH / 2),  //dest y
-			Math.round(ICON_WIDTH), //dest width
-			Math.round(ICON_WIDTH)  //dest height
+			Math.round(this.pos.x + xOff),  //dest x
+			Math.round(this.pos.y + yOff),  //dest y
+			Math.round(this.obj.iconSize[0]), //dest width
+			Math.round(this.obj.iconSize[1])  //dest height
 		);
 	}
 
@@ -256,19 +259,28 @@ export class Instance {
 			let moveData: string = this.properties?.moveData ?? "";
 			let points: Point[] = this.getMovingPlatformPoints(moveData);
 			for (let i = 0; i < points.length - 1; i++) {
-				DrawWrappers.drawLine(ctx, points[i].x, points[i].y, points[i + 1].x, points[i + 1].y, "red", 2);
+				DrawWrappers.drawLine(
+					ctx, points[i].x, points[i].y,
+					points[i + 1].x, points[i + 1].y, "red", 2
+				);
 			}
 		}
 
 		if (data.showInstanceLabels && this.objectName === "Ladder") {
 			let rect = this.getRect();
 			let num = this.getNum();
-			DrawWrappers.drawText(ctx, num === 0 ? "" : num.toString(), rect.x2, (rect.y1 + rect.y2) / 2, "black", "white", 18);
+			//DrawWrappers.drawText(
+			//	ctx, num === 0 ? "" : num.toString(), rect.x2, 
+			//	(rect.y1 + rect.y2) / 2, "black", "white", 18
+			//);
 		}
 
-		if (data.showInstanceLabels && !this.isShape) {
+		if (data.showInstanceLabels && !this.isShape && this.obj.name == "Node") {
 			let num = this.getNum();
-			DrawWrappers.drawText(ctx, num === 0 ? "" : num.toString(), this.pos.x, this.pos.y, "black", "white", 18);
+			DrawWrappers.drawText(
+				ctx, num === 0 ? "" : num.toString(),
+				this.pos.x + 4, this.pos.y + 4, "white", "black", 8
+			);
 		}
 	}
 
@@ -371,15 +383,37 @@ export class Instance {
 			if (this.objectName.startsWith("Map Sprite")) {
 				let spriteName = this.properties.spriteName;
 				let sprite = global.sprites.find(s => s.name === spriteName);
-				if (!sprite?.frames || sprite.frames.length === 0) {
-					return new Rect(this.pos.x - ICON_WIDTH / 2, this.pos.y - ICON_WIDTH / 2, this.pos.x + ICON_WIDTH / 2, this.pos.y + ICON_WIDTH / 2);
+				if (sprite?.frames == null || sprite.frames.length === 0) {
+					let xOff = this.obj.iconSize[0] / 2;
+					let yOff = this.obj.iconSize[1];
+					if (this.obj.center) {
+						yOff = this.obj.iconSize[1] / 2;
+					}
+
+					return new Rect(
+						this.pos.x - xOff,
+						this.pos.y - yOff,
+						this.pos.x + (this.obj.iconSize[0] - xOff),
+						this.pos.y + (this.obj.iconSize[1] - yOff)
+					);
 				}
 				let rect = sprite.frames[0].rect;
 				let offset = sprite.getAlignOffset(sprite.frames[0]);
 				return Rect.CreateWH(this.pos.x + offset.x, this.pos.y + offset.y, rect.w, rect.h);
 			}
 			else {
-				return new Rect(this.pos.x - ICON_WIDTH / 2, this.pos.y - ICON_WIDTH / 2, this.pos.x + ICON_WIDTH / 2, this.pos.y + ICON_WIDTH / 2)
+				let xOff = this.obj.iconSize[0] / 2;
+				let yOff = this.obj.iconSize[1];
+				if (this.obj.center) {
+					yOff = this.obj.iconSize[1] / 2;
+				}
+
+				return new Rect(
+					this.pos.x - xOff,
+					this.pos.y - yOff,
+					this.pos.x + (this.obj.iconSize[0] - xOff),
+					this.pos.y + (this.obj.iconSize[1] - yOff)
+				);
 			}
 		}
 		else {

@@ -60,25 +60,26 @@ function renderLevelList(t: LevelEditor): JSX.Element {
 					<button onClick={() => t.addLevel()}>Add</button>
 				</div>
 			}
-			<div>Filter: <TextInput width="140px" initialValue={state.levelFilter} onSubmit={str => { t.changeLevelFilter(str); }} />
-			</div>
-			Filter mode: <select value={state.selectedFilterMode} onChange={e => { t.changeLevelFilterMode(e.target.value); }}>
-				<option value="contains">Contains</option>
-				<option value="exactmatch">Exact match</option>
-				<option value="startswith">Starts with</option>
-				<option value="endswith">Ends with</option>
-			</select>
-
 			<div>
-				<div className="sprite-list-scroll">
-					{
-						t.getFilteredLevels().map((level, index) => (
-							<div key={level.name} className={"sprite-item" + (level.name === state.selectedLevel?.name ? " selected" : "")} onClick={e => t.changeLevel(level)}>
-								{t.getLevelDisplayName(level)}
-							</div>
-						))
-					}
-				</div>
+				Filter: <TextInput width="140px" initialValue={state.levelFilter} onSubmit={str => { t.changeLevelFilter(str); }} />
+			</div>
+			<div>
+				Filter mode: <select value={state.selectedFilterMode} onChange={e => { t.changeLevelFilterMode(e.target.value); }}>
+					<option value="contains">Contains</option>
+					<option value="exactmatch">Exact match</option>
+					<option value="startswith">Starts with</option>
+					<option value="endswith">Ends with</option>
+				</select>
+			</div>
+
+			<div className="sprite-list-scroll">
+				{
+					t.getFilteredLevels().map((level, index) => (
+						<div key={level.name} className={"sprite-item" + (level.name === state.selectedLevel?.name ? " selected" : "")} onClick={e => t.changeLevel(level)}>
+							{t.getLevelDisplayName(level)}
+						</div>
+					))
+				}
 			</div>
 		</div>
 	);
@@ -115,16 +116,13 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 	let state = t.data;
 	return (
 		<div className="canvas-section">
-			<div style={{ display: "inline-block" }}>
-				<div className="level-canvas-wrapper" style={{ width: t.canvasWidth.toString() + "px", height: t.canvasHeight.toString() + "px" }} tabIndex={1}>
-					<canvas id="level-canvas" width={t.canvasWidth.toString()} height={t.canvasHeight.toString()}></canvas>
-				</div>
+			<div className="level-canvas-wrapper" style={{ display: "flex;", overflow: "hidden;" }}>
+				<canvas id="level-canvas" width={t.canvasWidth.toString()} height={t.canvasHeight.toString()}></canvas>
 			</div>
-
 			{
 				state.selectedLevel &&
 
-				<div style={{ margin: "2px" }}>
+				<div className="level-canvas-buttons" style={{ margin: "2px" }}>
 
 					{!t.isOptimizedMode() &&
 						<div>
@@ -133,79 +131,85 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 					}
 
 					{t.isOptimizedMode() &&
-						<table style={{ border: "1px solid black" }}>
-							<tbody>
-								<tr>
-									<td>
-										<div>OPTIMIZED MODE ON</div>
-										<button onClick={e => t.setOptimizedMode(false)}>Turn Off</button>
-									</td>
-									<td style={{ paddingLeft: "185px", paddingRight: "15px" }}>
-										Scroll
-									</td>
-									<td>
-										<div>
-											<button onClick={e => t.fastScroll(0, -1)} style={{ marginLeft: "30px" }}>↑</button>
+						<div style={{
+							border: "1px solid black",
+							height: "100%",
+							overflowX: "auto",
+							overflowY: "hidden" 
+						}}>
+							<table>
+								<tbody>
+									<tr>
+										<td>
+											<div>OPTIMIZED MODE ON</div>
+											<button onClick={e => t.setOptimizedMode(false)}>Turn Off</button>
+										</td>
+										<td style={{ paddingLeft: "185px", paddingRight: "15px" }}>
+											Scroll
+										</td>
+										<td>
 											<div>
-												<button onClick={e => t.fastScroll(-1, 0)}>←</button>
-												<button onClick={e => t.fastScroll(0, 1)}>↓</button>
-												<button onClick={e => t.fastScroll(1, 0)}>→</button>
+												<button onClick={e => t.fastScroll(0, -1)} style={{ marginLeft: "30px" }}>↑</button>
+												<div>
+													<button onClick={e => t.fastScroll(-1, 0)}>←</button>
+													<button onClick={e => t.fastScroll(0, 1)}>↓</button>
+													<button onClick={e => t.fastScroll(1, 0)}>→</button>
+												</div>
 											</div>
-										</div>
-									</td>
-									<td style={{ paddingLeft: "100px", paddingRight: "15px" }}>
-										Scroll Page
-									</td>
-									<td>
-										<div>
-											<button onClick={e => t.fastScrollPage(0, -1)} style={{ marginLeft: "30px" }}>↑</button>
+										</td>
+										<td style={{ paddingLeft: "100px", paddingRight: "15px" }}>
+											Scroll Page
+										</td>
+										<td>
 											<div>
-												<button onClick={e => t.fastScrollPage(-1, 0)}>←</button>
-												<button onClick={e => t.fastScrollPage(0, 1)}>↓</button>
-												<button onClick={e => t.fastScrollPage(1, 0)}>→</button>
+												<button onClick={e => t.fastScrollPage(0, -1)} style={{ marginLeft: "30px" }}>↑</button>
+												<div>
+													<button onClick={e => t.fastScrollPage(-1, 0)}>←</button>
+													<button onClick={e => t.fastScrollPage(0, 1)}>↓</button>
+													<button onClick={e => t.fastScrollPage(1, 0)}>→</button>
+												</div>
 											</div>
-										</div>
-									</td>
-									<td style={{ paddingLeft: "100px", paddingRight: "15px" }}>
-										Jump To Start/End
-									</td>
-									<td>
-										<div>
-											<button onClick={e => t.fastScrollStartEnd(0, -1)} style={{ marginLeft: "30px" }}>↑</button>
+										</td>
+										<td style={{ paddingLeft: "100px", paddingRight: "15px" }}>
+											Jump To Start/End
+										</td>
+										<td>
 											<div>
-												<button onClick={e => t.fastScrollStartEnd(-1, 0)}>←</button>
-												<button onClick={e => t.fastScrollStartEnd(0, 1)}>↓</button>
-												<button onClick={e => t.fastScrollStartEnd(1, 0)}>→</button>
+												<button onClick={e => t.fastScrollStartEnd(0, -1)} style={{ marginLeft: "30px" }}>↑</button>
+												<div>
+													<button onClick={e => t.fastScrollStartEnd(-1, 0)}>←</button>
+													<button onClick={e => t.fastScrollStartEnd(0, 1)}>↓</button>
+													<button onClick={e => t.fastScrollStartEnd(1, 0)}>→</button>
+												</div>
 											</div>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					}
 
-					<div>
+					<div style={{
+						display: "flex", flexDirection: "row",
+						alignItems: "baseline", width: "100%", flexWrap: "wrap"
+					}}>
 						{!t.data.selectedLevel.isMirrorJson() &&
-							<>
+							<div>
 								<button disabled={!state.selectedLevel.isDirty} onClick={e => t.saveLevel()}>Save</button>
 								<button onClick={e => t.cssld()}>Force Dirty</button>
 								<button onClick={e => t.unhideAll()}>Unhide All</button>
-							</>
+							</div>
 						}
-
-						<input type="checkbox" checked={state.showInstanceLabels} onChange={e => { state.showInstanceLabels = e.target.checked; t.changeState(); }} />Show labels |
-						<input type="checkbox" checked={state.showWallPaths} onChange={e => { t.setShowWallPaths(e.target.checked); }} />Show wall paths&nbsp;
-						<button title="regenerate" disabled={!state.showWallPaths} onClick={e => t.refreshShowWallPaths()}>⟳</button> |
-						{!t.config.isProd && (
-							<>
-								<input type="checkbox" checked={state.snapCollision} onChange={e => { state.snapCollision = e.target.checked; t.changeState(); }} />Snap Collision |
-							</>
-						)}
-						Zoom Level: <input style={{ width: "35px" }} type="number" value={t.getZoom().toString()} onChange={e => t.setZoom(e.target.valueAsNumber)} /> |
-						Canvas Size:
-						<NumberInput initialValue={t.canvasWidth} onSubmit={num => { t.changeCanvasWidth(num); }} /> x&nbsp;
-						<NumberInput initialValue={t.canvasHeight} onSubmit={num => { t.changeCanvasHeight(num); }} /> |
-						Clicked Mouse Coords: {Math.round(t.levelCanvas.lastClickX)},{Math.round(t.levelCanvas.lastClickY)}
+						<div><input type="checkbox" checked={state.showInstanceLabels} onChange={e => { state.showInstanceLabels = e.target.checked; t.changeState(); }} />Show labels</div>
+						<div style={{ width: 2 }}/>
+						<div><input type="checkbox" checked={state.showWallPaths} onChange={e => { t.setShowWallPaths(e.target.checked); }} />Show wall paths&nbsp;
+						<button title="regenerate" disabled={!state.showWallPaths} onClick={e => t.refreshShowWallPaths()}>⟳</button></div>
+						<div style={{ width: 2 }}/>
+						<div><input type="checkbox" checked={state.snapCollision} onChange={e => { state.snapCollision = e.target.checked; t.changeState(); }} />Snap Collision</div>
+						<div style={{ width: 6 }}/>
+						<div>Zoom Level: <input style={{ width: "35px" }} type="number" value={t.getZoom().toString()} onChange={e => t.setZoom(e.target.valueAsNumber)} /></div>
+						<div style={{ width: 6 }}/>
+						<div>Clicked Mouse Coords: {Math.round(t.levelCanvas.lastClickX)},{Math.round(t.levelCanvas.lastClickY)}</div>
 					</div>
 
 					<div id="map-properties">
@@ -271,7 +275,7 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 						<input type="checkbox" checked={state.showParallaxes} onChange={e => { state.showParallaxes = e.target.checked; t.redraw(true); t.changeState(); }} />
 						Parallaxes:
 						<button onClick={e => { state.selectedLevel.parallaxes.push(new Parallax()); t.cssld(); }}>Add new</button>
-						<div>
+						<div className="parallax-list">
 							{state.selectedLevel.parallaxes.map((parallax, index) => (
 								<div className="parallax" key={parallax.path + "_" + index + "_" + parallax.isLargeCamOverride}>
 									<div>
@@ -607,7 +611,10 @@ function renderInstanceList(t: LevelEditor): JSX.Element {
 			<h1>Instances</h1>
 			{
 				state.selectedLevel &&
-				<div>
+				<div style={{
+					display: "flex", flexDirection: "column", alignItems: "flex-start",
+					width: "100%", height: "100%", overflow: "hidden"
+				}}>
 					<button onClick={e => t.sortInstances()}>Sort</button>
 					<div className="sprite-list-scroll">
 						{

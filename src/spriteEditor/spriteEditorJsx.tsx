@@ -66,13 +66,15 @@ function renderSpriteListContainer(t: SpriteEditor): JSX.Element {
 
 			<div>Filter: <TextInput width="140px" initialValue={state.spriteFilter} onSubmit={str => { t.changeSpriteFilter(str); }} />
 			</div>
-			Filter mode: <select value={state.selectedFilterMode} onChange={e => { t.changeSpriteFilterMode(e.target.value); }}>
-				<option value="contains">Contains</option>
-				<option value="exactmatch">Exact match</option>
-				<option value="startswith">Starts with</option>
-				<option value="endswith">Ends with</option>
-			</select>
 
+			<div>
+				Filter mode: <select value={state.selectedFilterMode} onChange={e => { t.changeSpriteFilterMode(e.target.value); }}>
+					<option value="contains">Contains</option>
+					<option value="exactmatch">Exact match</option>
+					<option value="startswith">Starts with</option>
+					<option value="endswith">Ends with</option>
+				</select>
+			</div>
 			<div className="sprite-list-scroll">
 				{
 					t.getFilteredSprites().map((sprite, index) => (

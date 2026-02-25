@@ -6,6 +6,7 @@ export function noCanvasSmoothing(c: CanvasRenderingContext2D) {
 	//c.webkitImageSmoothingEnabled = false;
 	//c.mozImageSmoothingEnabled = false;
 	c.imageSmoothingEnabled = false; /// future
+	c.filter = "none";
 }
 
 let helperCanvas = document.createElement("canvas");
@@ -87,8 +88,12 @@ export function drawRect(ctx: CanvasRenderingContext2D, rect: Rect, fillColor?: 
 	let rx2: number = Math.round(rect.x2);
 	let ry2: number = Math.round(rect.y2);
 
+	let off = 0;
+	if (strokeWidth != null && strokeWidth % 2 == 1) {
+		off += 0.5;
+	}
 	ctx.beginPath();
-	ctx.rect(rx, ry, rx2 - rx, ry2 - ry);
+	ctx.rect(rx + off, ry + off, rx2 - rx, ry2 - ry);
 
 	if (fillAlpha) {
 		ctx.globalAlpha = fillAlpha;
@@ -109,19 +114,25 @@ export function drawRect(ctx: CanvasRenderingContext2D, rect: Rect, fillColor?: 
 	ctx.globalAlpha = 1;
 }
 
-export function drawPolygon(ctx: CanvasRenderingContext2D, shape: Shape, closed: boolean, fillColor?: string, lineColor?: string, lineThickness?: number, fillAlpha?: number): void {
-
+export function drawPolygon(
+	ctx: CanvasRenderingContext2D,
+	shape: Shape, closed: boolean,
+	fillColor?: string, lineColor?: string,
+	lineThickness?: number, fillAlpha?: number
+): void {
 	let vertices = shape.points;
-
+	let off = 0;
+	if (lineThickness > 0 && lineThickness % 2 == 1) {
+		off += 0.5;
+	}
 	if (fillAlpha) {
 		ctx.globalAlpha = fillAlpha;
 	}
-
 	ctx.beginPath();
-	ctx.moveTo(vertices[0].x, vertices[0].y);
+	ctx.lineTo(vertices[0].x + off, vertices[0].y + off);
 
 	for (let i: number = 1; i < vertices.length; i++) {
-		ctx.lineTo(vertices[i].x, vertices[i].y);
+		ctx.lineTo(vertices[i].x + off, vertices[i].y + off);
 	}
 
 	if (closed) {
@@ -185,7 +196,7 @@ export function drawLine(ctx: CanvasRenderingContext2D, x: number, y: number, x2
 	if (!color) color = 'black';
 
 	ctx.beginPath();
-	ctx.moveTo(x, y);
+	ctx.lineTo(x, y);
 	ctx.lineTo(x2, y2);
 	ctx.lineWidth = thickness;
 	ctx.strokeStyle = color;

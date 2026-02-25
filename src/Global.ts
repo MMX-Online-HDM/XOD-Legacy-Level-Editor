@@ -11,7 +11,6 @@ class Global {
 	imageMap: { [fileName: string]: HTMLImageElement } = {};
 	nextSelectableId: number = 0;
 	objects: Obj[] = [
-
 		new Obj("Collision Shape", true, "blue", "", 1),
 
 		new Obj("Water Zone", true, "lightblue", "", -1),
@@ -43,7 +42,7 @@ class Global {
 		new Obj("Ride Armor", false, "", "resources/images/rideArmor.png", 17),
 		new Obj("Ride Chaser", false, "", "resources/images/rideChaser.png", 18),
 
-		new Obj("Node", false, "", "resources/images/graph_node.png", 19),
+		new Obj("Node", false, "", "resources/images/graph_node.png", 19, true),
 
 		new Obj("Map Sprite", false, "", "resources/images/mapSpritePlaceholder.png", 19),
 		new Obj("Moving Platform", false, "", "resources/images/mapSpritePlaceholder.png", 19.5),
@@ -53,7 +52,6 @@ class Global {
 
 		new Obj("Goal", false, "", "resources/images/victoryPoint.png", 21),
 		new Obj("Gate", true, "purple", "", 22),
-
 	];
 	alignments: string[] = ["topleft", "topmid", "topright", "midleft", "center", "midright", "botleft", "botmid", "botright"];
 	wrapModes: string[] = ["loop", "once"];

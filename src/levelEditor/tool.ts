@@ -32,7 +32,10 @@ export class Tool {
 		let data = this.levelEditor.data;
 		//Draw individual borders
 		data.selectedInstances.forEach((selection) => {
-			DrawWrappers.drawRect(this.ctx, selection.getRect(), "", "green", 1, 0.75);
+			let rec = selection.getRect();
+			rec.topLeftPoint.x = rec.x1 - 1;
+			rec.topLeftPoint.y = rec.y1 - 1;
+			DrawWrappers.drawRect(this.ctx, rec, "", "green", 1, 0.75);
 		});
 	}
 
@@ -102,31 +105,31 @@ export class Tool {
 	}
 
 	snapOthersToSelection() {
-		let leState = this.levelEditor.data;
-		let si = this.levelEditor.data.selectedInstances[0];
-		if (si && leState.snapCollision && si.objectName === "Collision Shape") {
-			for (let instance of leState.selectedLevel.instances) {
-				if (leState.selectedInstanceIds.includes(instance.id)) continue;
-				if (instance.objectName !== "Collision Shape") continue;
-				let shape1 = new Shape(si.points);
-				let rect = shape1.getBoundingRect();
-				rect.topLeftPoint.x -= 6;
-				rect.topLeftPoint.y -= 6;
-				rect.botRightPoint.x += 6;
-				rect.botRightPoint.y += 6;
-				let shape2 = new Shape(instance.points);
-				let rect2 = shape2.getBoundingRect();
-				if (!rect.overlaps(rect2)) continue;
-				instance.snapCollisionShape(leState.selectedLevel.instances);
-			}
-		}
+		this.snapSelectionToOthers();
 	}
 
 	snapSelectionToOthers() {
 		let leState = this.levelEditor.data;
-		let si = this.levelEditor.data.selectedInstances[0];
-		if (leState.snapCollision && si.objectName === "Collision Shape") {
-			si.snapCollisionShape(leState.selectedLevel.instances);
+		let isNonNullList = this.levelEditor.data.selectedInstances.length > 0;
+		let snapSize = leState.snapSize;
+		if (!(isNonNullList && leState.snapCollision)) {
+			return;
+		}
+		for (let instance of this.levelEditor.data.selectedInstances) {
+			if (!instance.isShape) {
+				let xOff = instance.obj.iconSize[0] / 2;
+				let yOff = 0;
+				if (instance.obj.center) {
+					yOff = instance.obj.iconSize[0] / 2;
+				}
+				instance.pos.x = Math.round((instance.pos.x - xOff) / snapSize) * snapSize + xOff;
+				instance.pos.y = Math.round((instance.pos.y - yOff) / snapSize) * snapSize + yOff;
+			} else {
+				for (let i = 0; i < instance.points.length; i++) {
+					instance.points[i].x = Math.round(instance.points[i].x / snapSize) * snapSize;
+					instance.points[i].y = Math.round(instance.points[i].y / snapSize) * snapSize;
+				}
+			}
 		}
 	}
 }
@@ -162,7 +165,6 @@ export class CreateInstanceTool extends Tool {
 }
 
 export class CreateTool extends Tool {
-
 	obj: Obj;
 	constructor(levelEditor: LevelEditor, obj: Obj) {
 		super(levelEditor);
