@@ -44,7 +44,7 @@ function renderLevelList(t: LevelEditor): JSX.Element {
 	let state = t.data;
 	return (
 		<div className="sprite-list-container">
-			<h1>{t?.config?.isInMapModFolder ? "Custom Maps" : "Official Maps"}</h1>
+			<h2 style={{ marginBlock: "6px" }}>{t?.config?.isInMapModFolder ? "Custom Maps" : "Official Maps"}</h2>
 			{
 				!state.newLevelActive &&
 				<button onClick={() => t.newLevel()}>New Map</button>
@@ -88,8 +88,8 @@ function renderLevelList(t: LevelEditor): JSX.Element {
 function renderObjectList(t: LevelEditor): JSX.Element {
 	let state = t.data;
 	return (
-		<div className="sprite-list-container">
-			<h1>Objects</h1>
+		<div className="sprite-list-container" style={{ width: "130px" }}>
+			<h2 style={{ marginBlock: "6px" }}>Objects</h2>
 			<div className="sprite-list-scroll">
 				{
 					global.objects.map((obj, index) => {
@@ -123,13 +123,6 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 				state.selectedLevel &&
 
 				<div className="level-canvas-buttons" style={{ margin: "2px" }}>
-
-					{!t.isOptimizedMode() &&
-						<div>
-							OPTIMIZED MODE OFF <button onClick={e => t.setOptimizedMode(true)}>Turn On</button>
-						</div>
-					}
-
 					{t.isOptimizedMode() &&
 						<div style={{
 							border: "1px solid black",
@@ -200,6 +193,10 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 								<button onClick={e => t.unhideAll()}>Unhide All</button>
 							</div>
 						}
+						{!t.isOptimizedMode() && <div style={{ width: 2 }}/>}
+						{!t.isOptimizedMode() &&
+							<button onClick={e => t.setOptimizedMode(true)}>Optimized mode</button>
+						}
 						<div><input type="checkbox" checked={state.showInstanceLabels} onChange={e => { state.showInstanceLabels = e.target.checked; t.changeState(); }} />Show labels</div>
 						<div style={{ width: 2 }}/>
 						<div><input type="checkbox" checked={state.showWallPaths} onChange={e => { t.setShowWallPaths(e.target.checked); }} />Show wall paths&nbsp;
@@ -211,9 +208,8 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 						<div style={{ width: 6 }}/>
 						<div>Clicked Mouse Coords: {Math.round(t.levelCanvas.lastClickX)},{Math.round(t.levelCanvas.lastClickY)}</div>
 					</div>
-
-					<div id="map-properties">
-						<h3 style={{ margin: 0 }}>Map data</h3>
+					<div id="map-properties" style={{ margin: 0, border: "1px solid black" }}>
+						<div><h3 style={{ margin: 0 }}>Map data</h3></div>
 						<div>
 							Short Name: <input type="text" maxLength={14} value={state.selectedLevel.shortName ?? ""} onChange={e => { state.selectedLevel.shortName = e.target.value; t.cssld(); }} /> |
 							Display Name: <input type="text" maxLength={25} value={state.selectedLevel.displayName ?? ""} onChange={e => { state.selectedLevel.displayName = e.target.value; t.cssld(); }} /> |
@@ -607,8 +603,8 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 function renderInstanceList(t: LevelEditor): JSX.Element {
 	let state = t.data;
 	return (
-		<div className="sprite-list-container">
-			<h1>Instances</h1>
+		<div className="sprite-list-container" style={{ width: "150px" }}>
+			<h2 style={{ marginBlock: "6px" }}>Instances</h2>
 			{
 				state.selectedLevel &&
 				<div style={{

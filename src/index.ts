@@ -66,6 +66,10 @@ function createWindow() {
 		let menu = Menu.buildFromTemplate(template);
 		Menu.setApplicationMenu(menu);
 	}*/
+	if (!isProd) {
+		mainWindow.webContents.openDevTools();
+	}
+	Menu.setApplicationMenu(null);
 
 	mainWindow.on("close", function (e) {
 		if (forceClose) {

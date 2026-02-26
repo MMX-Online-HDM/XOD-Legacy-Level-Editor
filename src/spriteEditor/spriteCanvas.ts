@@ -49,6 +49,13 @@ export class SpriteCanvas extends CanvasUI {
 
 		let cX = this.canvas.width / 2;
 		let cY = this.canvas.height / 2;
+		
+		if (!state.hideGizmos) {
+			let len = 1000;
+			DrawWrappers.drawRect(this.ctx, new Rect(cX - len, cY, cX + len, cY + len), "#B9CECE");
+			DrawWrappers.drawLine(this.ctx, cX, cY - len, cX, cY + len, "cadetblue", 1);
+			DrawWrappers.drawLine(this.ctx, cX - len, cY, cX + len, cY, "cadetblue", 1);
+		}
 
 		let drewVileCannon = [];
 		for (let poi of frame.POIs) {
@@ -125,10 +132,7 @@ export class SpriteCanvas extends CanvasUI {
 				}
 			}
 
-			let len = 1000;
-			DrawWrappers.drawLine(this.ctx, cX, cY - len, cX, cY + len, "red", 1);
-			DrawWrappers.drawLine(this.ctx, cX - len, cY, cX + len, cY, "red", 1);
-			DrawWrappers.drawCircle(this.ctx, cX, cY, 1, "red");
+			//DrawWrappers.drawCircle(this.ctx, cX, cY, 1, "red");
 			//drawStroked(c1, "+", cX, cY);
 
 			for (let i = 0; i < frame.POIs.length; i++) {
@@ -137,7 +141,18 @@ export class SpriteCanvas extends CanvasUI {
 				let x = cX + (state.selectedSprite.alignOffX || 0);
 				let y = cY + (state.selectedSprite.alignOffY || 0);
 				if (!drewVileCannon[i] && !this.drawVileCannon(poi, x, y, false)) {
-					DrawWrappers.drawCircle(this.ctx, poi.x + x, poi.y + y, 1, "green");
+					DrawWrappers.drawLine(
+						this.ctx,
+						poi.x + x, poi.y + y - 1,
+						poi.x + x, poi.y + y + 1,
+						"green", 0.5
+					);
+					DrawWrappers.drawLine(
+						this.ctx,
+						poi.x + x - 1, poi.y + y,
+						poi.x + x + 1, poi.y + y,
+						"green", 0.5
+					);
 				}
 			}
 

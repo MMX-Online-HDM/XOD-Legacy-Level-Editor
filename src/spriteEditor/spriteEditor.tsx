@@ -37,7 +37,7 @@ export class SpriteEditorState {
 	offsetX: number = 0;
 	offsetY: number = 0;
 	hideGizmos: boolean = false;
-	moveChildren: boolean = false;
+	moveChildren: boolean = true;
 	moveToTopOrBottom: boolean = false;
 	bulkDuration: number = 0;
 	newSpriteName: string = "";

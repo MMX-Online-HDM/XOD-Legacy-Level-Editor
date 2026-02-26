@@ -194,10 +194,11 @@ export function drawLine(ctx: CanvasRenderingContext2D, x: number, y: number, x2
 
 	if (!thickness) thickness = 1;
 	if (!color) color = 'black';
+	let off = 0.5;
 
 	ctx.beginPath();
-	ctx.lineTo(x, y);
-	ctx.lineTo(x2, y2);
+	ctx.lineTo(x + off, y + off);
+	ctx.lineTo(x2 + off, y2 + off);
 	ctx.lineWidth = thickness;
 	ctx.strokeStyle = color;
 	ctx.stroke();

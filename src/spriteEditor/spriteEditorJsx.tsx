@@ -93,7 +93,7 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 
 	return (
 		<div className="canvas-section">
-			<div className="canvas-wrapper" style={{ width: 700, height: 600 }} tabIndex={1}>
+			<div className="canvas-wrapper" style={{ height: "60%" }} tabIndex={1}>
 				<canvas id="canvas1" width="700" height="600"></canvas>
 			</div>
 			<div id="app2">
@@ -143,7 +143,7 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 							Custom Align X:<NumberInput initialValue={state.selectedSprite.alignOffX || 0} onSubmit={(num: number) => { state.selectedSprite.alignOffX = num; t.csssd(); }} />
 							Custom Align Y:<NumberInput initialValue={state.selectedSprite.alignOffY || 0} onSubmit={(num: number) => { state.selectedSprite.alignOffY = num; t.csssd(); }} />
 						</div>
-
+						<div className="hitbox-container">
 						<div className="hitbox-section">
 							Global Hitboxes<br />
 							{state.selectedSprite.hitboxes?.map((hitbox, index) => (
@@ -169,7 +169,6 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 								<span>Click canvas twice (top left point then bottom right point)</span>
 							}
 						</div>
-
 						{state.selectedFrame &&
 							<div className="hitbox-section">
 								Frame Hitboxes<br />
@@ -198,7 +197,6 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 								}
 							</div>
 						}
-
 						{state.selectedFrame &&
 							<div className="hitbox-section">
 								Frame POIs<br />
@@ -221,6 +219,7 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 								}
 							</div>
 						}
+						</div>
 					</div>
 				}
 			</div>
@@ -233,41 +232,48 @@ function renderSpritesheetCanvas(t: SpriteEditor): JSX.Element {
 	let state = t.data;
 
 	return (
-		<div className="canvas-section">
-			<div className="canvas-wrapper" style={{ width: "1000px", height: "700px" }} tabIndex={2}>
-				<canvas id="canvas2" width="500" height="700"></canvas>
+		<div className="canvas-section" style={{ width: "30%", flex: "none" }}>
+			<div className="canvas-wrapper" style={{ height: "60%", flex: "none" }} tabIndex={2}>
+				<canvas id="canvas2"></canvas>
 			</div>
-			<div id="app3">
-				{state.selectedSprite && t.selectedSpritesheet &&
-					<div>
-						{state.selectedSprite.frames.length > 0 &&
-							<>
-								<input type="checkbox" checked={state.moveToTopOrBottom} onChange={e => { state.moveToTopOrBottom = e.target.checked; t.changeState(); }} />Frame move/copy to top/bottom<br />
-							</>
-						}
+			{state.selectedSprite && t.selectedSpritesheet &&
+				<div style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+					{state.selectedSprite.frames.length > 0 &&
+						<div>
+							<input type="checkbox" checked={state.moveToTopOrBottom} onChange={e => { state.moveToTopOrBottom = e.target.checked; t.changeState(); }} />Frame move/copy to top/bottom<br />
+						</div>
+					}
+					<div className="frame-list">
 						{state.selectedSprite.frames.map((frame, index) => (
 							<div key={frame.frameId} className={"frame-data unselectable" + (state.selectedFrameIndex === index ? " selected-frame" : "")} onClick={e => t.selectFrame(index)}>
-								<div>
+								<div style={{ paddingBottom: "4px" }}>
 									<b>Frame {index} </b>
-									duration: <NumberInput initialValue={frame.getDurationInFrames()} onSubmit={num => { frame.setDurationFromFrames(num); t.csssd(); }} />&nbsp;
+									<button className="icon-button" title="Move Up" onClick={e => { e.stopPropagation(); t.moveFrame(index, -1); }}><img src="file:///resources/images/moveup.png" /></button>
+									<button className="icon-button" title="Move Down" onClick={e => { e.stopPropagation(); t.moveFrame(index, 1); }}><img src="file:///resources/images/movedown.png" /></button>
+									<button className="icon-button" title="Copy Up" onClick={e => { e.stopPropagation(); t.copyFrame(index, -1); }}><img src="file:///resources/images/copyup.png" /></button>
+									<button className="icon-button" title="Copy Down" onClick={e => { e.stopPropagation(); t.copyFrame(index, 1); }}><img src="file:///resources/images/copydown.png" /></button>
+									<button className="icon-button" title="Replace frame with current selection" onClick={e => { e.stopPropagation(); t.addPendingFrame(index); }}><img src="file:///resources/images/overwrite.png" /></button>
+									<button className="icon-button" title="Delete" onClick={e => { e.stopPropagation(); t.deleteFrame(index); }}><img src="file:///resources/images/delete.png" /></button>
+									&nbsp;&nbsp;
+									<button className="icon-button" onClick={e => t.recomputeFrame(frame)}>Recompute</button>
+								</div>
+								<div style={{ paddingBottom: "4px" }}>
+									Duration: <NumberInput initialValue={frame.getDurationInFrames()} onSubmit={num => { frame.setDurationFromFrames(num); t.csssd(); }} />&nbsp;
 									x-off: <NumberInput initialValue={frame.offset.x} onSubmit={num => { frame.offset.x = num; t.csssd(); }} />&nbsp;
 									y-off: <NumberInput initialValue={frame.offset.y} onSubmit={num => { frame.offset.y = num; t.csssd(); }} />&nbsp;
-									<button title="Move Up" onClick={e => { e.stopPropagation(); t.moveFrame(index, -1); }}><img src="file:///resources/images/moveup.png" /></button>
-									<button title="Move Down" onClick={e => { e.stopPropagation(); t.moveFrame(index, 1); }}><img src="file:///resources/images/movedown.png" /></button>
-									<button title="Copy Up" onClick={e => { e.stopPropagation(); t.copyFrame(index, -1); }}><img src="file:///resources/images/copyup.png" /></button>
-									<button title="Copy Down" onClick={e => { e.stopPropagation(); t.copyFrame(index, 1); }}><img src="file:///resources/images/copydown.png" /></button>
-									<button title="Replace frame with current selection" onClick={e => { e.stopPropagation(); t.addPendingFrame(index); }}><img src="file:///resources/images/overwrite.png" /></button>
-									<button title="Delete" onClick={e => { e.stopPropagation(); t.deleteFrame(index); }}><img src="file:///resources/images/delete.png" /></button>
-									&nbsp;frame rect:&nbsp;
+								</div>
+								<div>
+									Frame rect:&nbsp;
 									<NumberInput initialValue={frame.rect.topLeftPoint.x} onSubmit={num => { frame.rect.topLeftPoint.x = num; t.csssd(); }} />
 									<NumberInput initialValue={frame.rect.topLeftPoint.y} onSubmit={num => { frame.rect.topLeftPoint.y = num; t.csssd(); }} />
 									<NumberInput initialValue={frame.rect.botRightPoint.x} onSubmit={num => { frame.rect.botRightPoint.x = num; t.csssd(); }} />
 									<NumberInput initialValue={frame.rect.botRightPoint.y} onSubmit={num => { frame.rect.botRightPoint.y = num; t.csssd(); }} />
 									<span>{frame.rect.botRightPoint.x - frame.rect.topLeftPoint.x}x{frame.rect.botRightPoint.y - frame.rect.topLeftPoint.y}</span>
-									<button onClick={e => t.recomputeFrame(frame)}>Recompute</button>
 								</div>
 							</div>
 						))}
+					</div>
+					<div>
 						{state.selectedSprite.frames.length > 0 &&
 							<div>
 								Set bulk duration:&nbsp;
@@ -289,8 +295,8 @@ function renderSpritesheetCanvas(t: SpriteEditor): JSX.Element {
 							</span>
 						}
 					</div>
-				}
-			</div>
+				</div>
+			}
 		</div>
 	);
 }
