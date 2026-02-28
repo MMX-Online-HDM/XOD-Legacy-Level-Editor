@@ -2,7 +2,7 @@
 // plugin that tells the Electron app where to look for the Webpack-bundled app code (depending on
 // whether you're running in development or production).
 import { app, BrowserWindow, dialog, ipcMain, Menu, webFrame } from "electron"
-import 'reflect-metadata'; 
+import 'reflect-metadata';
 import _ from "lodash";
 import { fileName, getAssetPath } from "./../src/helpers";
 import stripJsonTrailingCommas from 'strip-json-trailing-commas';
@@ -26,17 +26,6 @@ let spriteFolderName = "sprites";
 let spritesheetFolderName = "spritesheets";
 let levelFolderName = "maps";
 let isMapSpritePath = false;
-
-const template = [
-	{
-		label: 'View',
-		submenu: [
-			{ role: 'resetZoom' },
-			{ role: 'zoomIn' },
-			{ role: 'zoomOut' },
-		]
-	}
-];
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

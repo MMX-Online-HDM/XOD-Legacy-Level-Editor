@@ -96,29 +96,40 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 			<div className="canvas-wrapper" style={{ height: "60%" }} tabIndex={1}>
 				<canvas id="canvas1" width="700" height="600"></canvas>
 			</div>
-			<div id="app2">
-				{
-					state.selectedSprite &&
-					<div>
+			{
+				state.selectedSprite &&
+				<div id="app2" style={{
+					height: "40%",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "flex-start",
+					overflow: "hidden",
+					margin: "4px 4px 0px 4px",
+					border: 4
+				}}>
+					{
+						//<button onClick={e => t.forceAllDirty()}>Force all dirty</button>
+						//<button onClick={e => t.undo()}>Undo</button>
+						//<button onClick={e => t.redo()}>Redo</button>
+					}
+					{/*<button onClick={e => t.debug()}>Debug</button>*/}
 
-						{
-							//<button onClick={e => t.forceAllDirty()}>Force all dirty</button>         
-							//<button onClick={e => t.undo()}>Undo</button>
-							//<button onClick={e => t.redo()}>Redo</button>
-						}
+					<div style={{
+						display: "flex",
+						flexDirection: "row",
+						flexWrap: "wrap"
+					}}>
+						<div className="canvas-sprbutton">
+							<button onClick={e => t.playAnim()}>{state.isAnimPlaying ? "Stop" : "Play"}</button>
+							<button onClick={e => t.saveSprite()} disabled={!state.isSelectedSpriteDirty()}>Save</button>
+							<button onClick={e => t.saveSprites()} disabled={!t.isAnySpriteDirty()}>Save All</button>
+							<button onClick={e => t.csssd()}>Force Dirty</button>
+						</div>
+						<div className="canvas-sprbutton">Zoom Level: <input style={{ width: "50px" }} type="number" value={t.getZoom().toString()} onChange={e => t.setZoom(e.target.valueAsNumber)} /></div>
 
-						<button onClick={e => t.playAnim()}>{state.isAnimPlaying ? "Stop" : "Play"}</button>
-						<button onClick={e => t.saveSprite()} disabled={!state.isSelectedSpriteDirty()}>Save</button>
-						<button onClick={e => t.saveSprites()} disabled={!t.isAnySpriteDirty()}>Save All</button>
-						<button onClick={e => t.csssd()}>Force Dirty</button>
-						{/*<button onClick={e => t.debug()}>Debug</button>*/}
-
-						Zoom Level: <input style={{ width: "50px" }} type="number" value={t.getZoom().toString()} onChange={e => t.setZoom(e.target.valueAsNumber)} />
-
-						<input type="checkbox" checked={state.hideGizmos} onChange={e => { state.hideGizmos = e.target.checked; t.changeState(); }} />Hide gizmos
-						<input type="checkbox" checked={state.moveChildren} onChange={e => { state.moveChildren = e.target.checked; t.changeState(); }} />Move children on frame move
-
-						<div>
+						<div className="canvas-sprbutton"><input type="checkbox" checked={state.hideGizmos} onChange={e => { state.hideGizmos = e.target.checked; t.changeState(); }} />Hide gizmos</div>
+						<div className="canvas-sprbutton"><input type="checkbox" checked={state.moveChildren} onChange={e => { state.moveChildren = e.target.checked; t.changeState(); }} />Move children on frame move</div>
+						<div className="canvas-sprbutton">
 							Spritesheet:
 							<select value={Helpers.fileName(state.selectedSpritesheetPath)} onChange={e => { state.setSelectedSpriteDirty(true); t.onSpritesheetChange(e.target.value); }}>
 								{global.spritesheets.map((spritesheet, index) => (
@@ -126,24 +137,26 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 								))}
 							</select>
 						</div>
-
-						<div>
+						<div className="canvas-sprbutton">
 							Alignment:
 							<select value={state.selectedSprite.alignment} onChange={e => { state.selectedSprite.alignment = e.target.value; t.csssd(); }}>
 								{global.alignments.map((alignment, index) => (
 									<option key={index} value={alignment}>{alignment}</option>
 								))}
 							</select>
+						</div>
+						<div className="canvas-sprbutton">
 							Wrap mode:
 							<select value={state.selectedSprite.wrapMode} onChange={e => { state.selectedSprite.wrapMode = e.target.value; t.csssd(); }}>
 								{global.wrapModes.map((wrapMode, index) => (
 									<option key={index} value={wrapMode}>{wrapMode}</option>
 								))}
 							</select>
-							Custom Align X:<NumberInput initialValue={state.selectedSprite.alignOffX || 0} onSubmit={(num: number) => { state.selectedSprite.alignOffX = num; t.csssd(); }} />
-							Custom Align Y:<NumberInput initialValue={state.selectedSprite.alignOffY || 0} onSubmit={(num: number) => { state.selectedSprite.alignOffY = num; t.csssd(); }} />
 						</div>
-						<div className="hitbox-container">
+						<div className="canvas-sprbutton">Custom Align X:<NumberInput initialValue={state.selectedSprite.alignOffX || 0} onSubmit={(num: number) => { state.selectedSprite.alignOffX = num; t.csssd(); }} /></div>
+						<div className="canvas-sprbutton">Custom Align Y:<NumberInput initialValue={state.selectedSprite.alignOffY || 0} onSubmit={(num: number) => { state.selectedSprite.alignOffY = num; t.csssd(); }} /></div>
+					</div>
+					<div className="hitbox-container">
 						<div className="hitbox-section">
 							Global Hitboxes<br />
 							{state.selectedSprite.hitboxes?.map((hitbox, index) => (
@@ -219,10 +232,9 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 								}
 							</div>
 						}
-						</div>
 					</div>
-				}
-			</div>
+				</div>
+			}
 		</div>
 	);
 }

@@ -52,7 +52,8 @@ export class SpriteCanvas extends CanvasUI {
 		
 		if (!state.hideGizmos) {
 			let len = 1000;
-			DrawWrappers.drawRect(this.ctx, new Rect(cX - len, cY, cX + len, cY + len), "#B9CECE");
+			DrawWrappers.drawRect(this.ctx, new Rect(cX - len, cY - 1, cX + len, cY + len), "#B9CECE");
+			DrawWrappers.drawRect(this.ctx, new Rect(cX - 1, cY - 1, cX + len, cY + len), "#B9CECE");
 			DrawWrappers.drawLine(this.ctx, cX, cY - len, cX, cY + len, "cadetblue", 1);
 			DrawWrappers.drawLine(this.ctx, cX - len, cY, cX + len, cY, "cadetblue", 1);
 		}
@@ -83,7 +84,6 @@ export class SpriteCanvas extends CanvasUI {
 
 		if (!state.hideGizmos) {
 			for (let hitbox of this.spriteEditor.getVisibleHitboxes()) {
-
 				let hx: number = 0; let hy: number = 0;
 				let halfW = hitbox.width * 0.5;
 				let halfH = hitbox.height * 0.5;
@@ -116,17 +116,19 @@ export class SpriteCanvas extends CanvasUI {
 				else if (state.selectedSprite.alignment === "botright") {
 					hx = cX - w; hy = cY - h;
 				}
-
 				let offsetRect = new Rect(
-					hx + hitbox.offset.x, hy + hitbox.offset.y, hx + hitbox.width + hitbox.offset.x, hy + hitbox.height + hitbox.offset.y
+					hx + hitbox.offset.x,
+					hy + hitbox.offset.y,
+					hx + hitbox.width + hitbox.offset.x,
+					hy + hitbox.height + hitbox.offset.y
 				);
-
 				let hitboxColor = "red";
 				if (hitbox.flag === 1) hitboxColor = "blue";
-				if (hitbox.flag === 2) hitboxColor = "purple";
-				if (hitbox.flag === 3) hitboxColor = "yellow";
+				else if (hitbox.flag === 2) hitboxColor = "purple";
+				else if (hitbox.flag === 3) hitboxColor = "yellow";
+				else if (hitbox.flag >= 4) hitboxColor = "grey";
 
-				DrawWrappers.drawRect(this.ctx, offsetRect, hitboxColor, undefined, undefined, 0.25);
+				DrawWrappers.drawRect(this.ctx, offsetRect, hitboxColor, undefined, undefined, 0.3);
 				if (state.selection === hitbox) {
 					DrawWrappers.drawRect(this.ctx, offsetRect, undefined, "green", 2 / this.zoom, 1);
 				}

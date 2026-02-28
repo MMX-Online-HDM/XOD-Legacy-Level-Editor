@@ -52,10 +52,18 @@
 	overflow: auto;
 }
 
+.hitbox-container {
+	border: 1px solid black;
+	margin: 1px;
+	overflow: auto;
+	width: 99.5%;
+}
+
 .hitbox-section {
 	padding: 5px;
 	display: block;
 	border: 1px solid black;
+	margin: 2px;
 }
 
 .hitbox-tag-input {
@@ -102,13 +110,23 @@
 	overflow: hidden;
 }
 
+.canvas-sprbutton {
+	height: 22px;
+    align-content: center;
+    padding-inline: 1px;
+}
+
+.canvas-sprbutton-alt {
+	height: 22px;
+    align-content: center;
+}
+
 .short-input {
 	width: 50px;
 }
 
 .number-input {
 	display: inline-block;
-	height: 22px;
 	width: 50px;
 }
 
@@ -120,7 +138,6 @@
 .number-input-buttons {
 	vertical-align: middle;
 	display: inline-block;
-	height: 22px;
 	margin-top: -1px;
 	margin-left: -15px;
 }
@@ -128,7 +145,6 @@
 .number-input-button {
 	display: block;
 	width: 15px;
-	height: 11px;
 	padding: 0px;
 	margin: 0px;
 	font-size: 6px;
@@ -192,7 +208,7 @@
 
 #level-editor,
 #sprite-editor {
-	padding: 0px 5px 5px 5px;
+	padding: 4px;
 	white-space: nowrap;
 	height: 100%;
 	display: flex;

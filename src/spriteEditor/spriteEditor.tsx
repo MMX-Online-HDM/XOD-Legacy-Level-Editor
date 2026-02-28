@@ -252,6 +252,36 @@ export class SpriteEditor extends BaseEditor<SpriteEditorState> {
 		}
 	}
 
+	mountMenu() {
+		/*let template: MenuItemConstructorOptions[] = [{
+			label: "&File",
+			submenu: [
+				{ label: "Visualmods", click: () => { } },
+				{ label: "Save All", click: () => { } },
+				{ label: "Reload", click: () => { } }
+			]
+		}, {
+			label: "&Edit",
+			submenu: [
+				{ label: "Undo", click: () => { } },
+				{ label: "Redo", click: () => { } },
+				{ label: "Ghost mode", click: () => { } },
+				{ label: "Remove ghost", click: () => { } },
+				{ label: "Copy shape", click: () => { } },
+			]
+		}, {
+			label: "&Help",
+			submenu: [
+				{ label: "Hotkeys", click: () => { this.input.showHelp() } },
+				{ role: 'toggleDevTools' },
+				{ label: "Asset Path", click: () => { } },
+				{ label: "Version" },
+			]
+		}];
+		let menu = Menu.buildFromTemplate(template);
+		Menu.setApplicationMenu(menu);*/
+	}
+
 	render(): JSX.Element {
 		return SpriteEditorJsx.render(this);
 	}

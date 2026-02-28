@@ -15,21 +15,7 @@ export class SpriteEditorInput extends GlobalInput {
 
 	onKeyDown(e: KeyboardEvent, keyCode: KeyCode, firstFrame: boolean) {
 		if (keyCode === KeyCode.F1) {
-			let helpString =
-				`Ctrl+Z: Undo
-Ctrl+Y: Redo
-Ctrl+Mouse Wheel: zoom
-F: Add Selected Frame
-R: Replace Current Frame With Selected Frame
-W/A/S/D: Move selected frame offset
-Q/E: Go to previous/next frame
-G: Activate Ghost mode
-Escape: Exit Ghost mode
-P: Place POI
-H: Place Headshot POI
-I: Place frame hitbox
-`;
-			window.Main.showDialog("Help", helpString);
+			this.showHelp();
 			return;
 		}
 
@@ -162,4 +148,21 @@ I: Place frame hitbox
 	onKeyUp(e: KeyboardEvent, keyCode: KeyCode) {
 	}
 
+	showHelp() {
+		let helpString = 
+`Ctrl+Z: Undo
+Ctrl+Y: Redo
+Ctrl+Mouse Wheel: zoom
+F: Add Selected Frame
+R: Replace Current Frame With Selected Frame
+W/A/S/D: Move selected frame offset
+Q/E: Go to previous/next frame
+G: Activate Ghost mode
+Escape: Exit Ghost mode
+P: Place POI
+H: Place Headshot POI
+I: Place frame hitbox
+`;
+		window.Main.showDialog("Help", helpString);
+	}
 }

@@ -117,7 +117,6 @@ export class LevelEditorState {
 };
 
 export class LevelEditor extends BaseEditor<LevelEditorState> {
-
 	levelCanvas: LevelCanvas;
 	tool: Tool;
 	input: LevelEditorInput;
@@ -150,7 +149,6 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 	}
 
 	componentDidMount() {
-
 		this.levelCanvas = new LevelCanvas(this);
 		this.input = new LevelEditorInput(this);
 
@@ -212,6 +210,34 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 			this.isLoading = false;
 			this.forceUpdate();
 		}
+	}
+
+	mountMenu() {
+		/*let template: Electron.MenuItemConstructorOptions[] = [{
+			label: "&File",
+			submenu: [
+				{ label: "Game sprites", click: () => { } },
+				{ label: "Stage sprites", click: () => { } },
+				{ label: "Save", click: () => { } },
+				{ label: "Reload", click: () => { } }
+			]
+		}, {
+			label: "&Edit",
+			submenu: [
+				{ label: "Undo", click: () => { } },
+				{ label: "Redo", click: () => { } },
+				{ label: "Show bounds", click: () => { } },
+			]
+		}, {
+			label: "&Help",
+			submenu: [
+				{ label: "Keybinds", click: () => { } },
+				{ label: "" },
+			]
+		}];
+		let menu = Electron.Menu.buildFromTemplate(template);
+		Electron.Menu.setApplicationMenu(menu);
+		*/
 	}
 
 	runConsoleCommand() {
