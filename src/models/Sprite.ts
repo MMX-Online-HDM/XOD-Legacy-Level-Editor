@@ -29,7 +29,9 @@ export class Sprite {
 	}
 
 	getSpritesheet(): Spritesheet {
-		return global.spritesheetMap[Helpers.getNormalizedSpritesheetName(this.customMapName, this.spritesheetPath)];
+		let sname = Helpers.getNormalizedSpritesheetName(this.customMapName, this.spritesheetPath)
+		let map = global.spritesheetMap;
+		return map[sname];
 	}
 
 	//Given the sprite's alignment, get the offset x and y on where to actually draw the sprite

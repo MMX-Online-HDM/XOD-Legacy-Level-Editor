@@ -1,5 +1,4 @@
 export class Config {
-
 	isProd: boolean;
 	lastSpriteFilter: string = "";
 	lastSpriteFilterMode: string = "";

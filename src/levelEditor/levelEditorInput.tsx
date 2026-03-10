@@ -40,11 +40,20 @@ export class LevelEditorInput extends GlobalInput {
 					return;
 				}
 			}
-
 			if (keyCode === KeyCode.F1) {
-				let helpString =
-					`
-GENERAL:
+				this.showHelp();
+			}
+		}
+	}
+
+	onKeyUp(e: KeyboardEvent, keyCode: KeyCode) {
+		if (this.levelEditor.tool) this.levelEditor.tool.onKeyUp(keyCode);
+		this.levelEditor.redraw();
+	}
+
+	showHelp() {
+		let helpString =
+`GENERAL:
 Ctrl+Z: Undo
 Ctrl+Y: Redo
 Ctrl+Mouse Wheel: zoom
@@ -67,13 +76,6 @@ F: link two nodes
 V: link two nodes (one way)
 X: unlink two nodes
 R: insert node between two nodes`;
-				window.Main.showDialog("Help", helpString);
-			}
-		}
-	}
-
-	onKeyUp(e: KeyboardEvent, keyCode: KeyCode) {
-		if (this.levelEditor.tool) this.levelEditor.tool.onKeyUp(keyCode);
-		this.levelEditor.redraw();
+		window.Main.showDialog("Help", helpString);
 	}
 }

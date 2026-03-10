@@ -1,6 +1,7 @@
 # VSCode
 .vscode/*
 .vs/*
+!.vscode/launch.json
 
 # Config
 config.json

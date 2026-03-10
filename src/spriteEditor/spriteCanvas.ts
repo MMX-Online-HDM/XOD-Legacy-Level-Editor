@@ -18,7 +18,7 @@ export class SpriteCanvas extends CanvasUI {
 	constructor(spriteEditor: SpriteEditor) {
 		super("canvas1", "lightgray");
 		this.isNoScrollZoom = true;
-		this.zoom = 5;
+		this.zoom = 2;
 		this.spriteEditor = spriteEditor;
 	}
 
@@ -49,11 +49,11 @@ export class SpriteCanvas extends CanvasUI {
 
 		let cX = this.canvas.width / 2;
 		let cY = this.canvas.height / 2;
-		
+
 		if (!state.hideGizmos) {
-			let len = 1000;
+			let len = 1024;
 			DrawWrappers.drawRect(this.ctx, new Rect(cX - len, cY - 1, cX + len, cY + len), "#B9CECE");
-			DrawWrappers.drawRect(this.ctx, new Rect(cX - 1, cY - 1, cX + len, cY + len), "#B9CECE");
+			DrawWrappers.drawRect(this.ctx, new Rect(cX - 1, cY - len, cX , cY), "#B9CECE");
 			DrawWrappers.drawLine(this.ctx, cX, cY - len, cX, cY + len, "cadetblue", 1);
 			DrawWrappers.drawLine(this.ctx, cX - len, cY, cX + len, cY, "cadetblue", 1);
 		}
@@ -128,7 +128,14 @@ export class SpriteCanvas extends CanvasUI {
 				else if (hitbox.flag === 3) hitboxColor = "yellow";
 				else if (hitbox.flag >= 4) hitboxColor = "grey";
 
-				DrawWrappers.drawRect(this.ctx, offsetRect, hitboxColor, undefined, undefined, 0.3);
+				DrawWrappers.drawRect(this.ctx, offsetRect, hitboxColor, "", 0, 0.3);
+				let outRect = new Rect(
+					hx + hitbox.offset.x,
+					hy + hitbox.offset.y,
+					hx + hitbox.width + hitbox.offset.x - 1,
+					hy + hitbox.height + hitbox.offset.y - 1
+				);
+				DrawWrappers.drawRect(this.ctx, outRect, "", hitboxColor, 1, 0.6);
 				if (state.selection === hitbox) {
 					DrawWrappers.drawRect(this.ctx, offsetRect, undefined, "green", 2 / this.zoom, 1);
 				}
@@ -143,17 +150,10 @@ export class SpriteCanvas extends CanvasUI {
 				let x = cX + (state.selectedSprite.alignOffX || 0);
 				let y = cY + (state.selectedSprite.alignOffY || 0);
 				if (!drewVileCannon[i] && !this.drawVileCannon(poi, x, y, false)) {
-					DrawWrappers.drawLine(
-						this.ctx,
-						poi.x + x, poi.y + y - 1,
-						poi.x + x, poi.y + y + 1,
-						"green", 0.5
-					);
-					DrawWrappers.drawLine(
-						this.ctx,
-						poi.x + x - 1, poi.y + y,
-						poi.x + x + 1, poi.y + y,
-						"green", 0.5
+					let npoi = new POI(poi.tags, poi.x, poi.y);
+					let color = " rgba(0, 255, 0, 0.8)";
+					DrawWrappers.drawCircle(
+						this.ctx, npoi.x + x, npoi.y + y, 1, color
 					);
 				}
 			}
@@ -233,6 +233,7 @@ export class SpriteCanvas extends CanvasUI {
 
 	onMouseMove(deltaX: number, deltaY: number) {
 		let state = this.spriteEditor.data;
+
 		if (state.selection && this.mousedown) {
 			state.selection.move(deltaX, deltaY);
 			this.redraw();
@@ -244,10 +245,12 @@ export class SpriteCanvas extends CanvasUI {
 
 	onLeftMouseDown() {
 		let state = this.spriteEditor.data;
-		let cX = (this.canvas.width) / 2;
-		let cY = (this.canvas.height) / 2;
-		let relMouseX = Math.round((this.mouseX - cX) / this.zoom);
-		let relMouseY = Math.round((this.mouseY - cY) / this.zoom);
+		let cX = this.canvas.width / 2;
+		let cY = this.canvas.height / 2;
+		let csX = (this.canvas.width) / (this.zoom * 2);
+		let csY = (this.canvas.height) / (this.zoom * 2);
+		let relMouseX = Math.round(this.mouseX - csX);
+		let relMouseY = Math.round(this.mouseY - csY);
 
 		if (this.spriteEditor.addPOIMode) {
 			if (state.selectedFrame) {
@@ -300,8 +303,8 @@ export class SpriteCanvas extends CanvasUI {
 		let found = false;
 		let selectables = state.getSelectables();
 		for (let selectable of selectables) {
-			let rect = selectable.getRect().clone(cX / this.zoom, cY / this.zoom);
-			if (rect.inRect((this.mouseX - cX) / this.zoom, (this.mouseY - cY) / this.zoom)) {
+			let rect = selectable.getRect(state.selectedSprite.alignment);
+			if (rect.inRect(relMouseX, relMouseY)) {
 				if (state.selectionId !== selectable.selectableId) {
 					state.selectionId = selectable.selectableId;
 					this.spriteEditor.changeState();

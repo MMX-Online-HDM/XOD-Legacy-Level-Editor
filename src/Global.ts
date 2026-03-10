@@ -8,13 +8,14 @@ class Global {
 	levels: Level[] = [];
 	spritesheetMap: { [path: string]: Spritesheet } = {};
 	backgroundMap: { [path: string]: Spritesheet } = {};
+	backgroundMapAlt: { [path: string]: Spritesheet } = {};
 	imageMap: { [fileName: string]: HTMLImageElement } = {};
 	nextSelectableId: number = 0;
 	objects: Obj[] = [
 		new Obj("Collision Shape", true, "blue", "", 1),
 
 		new Obj("Water Zone", true, "lightblue", "", -1),
-		new Obj("Backwall Zone", true, "gray", "", 0),
+		new Obj("Backwall Zone", true, "plum", "", 0),
 
 		new Obj("Brake Zone", true, "aqua", "", 1),
 		new Obj("Turn Zone", true, "olive", "", 1.5),

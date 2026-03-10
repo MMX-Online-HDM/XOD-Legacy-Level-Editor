@@ -32,6 +32,7 @@
     flex-direction: column;
     align-items: flex-start;
 	overflow: hidden;
+	margin: 2px;
 }
 
 .sprite-item {
@@ -53,13 +54,14 @@
 }
 
 .hitbox-container {
+	background-color: lightgrey;
 	border: 1px solid black;
-	margin: 1px;
 	overflow: auto;
-	width: 99.5%;
+	height: 100%;
 }
 
 .hitbox-section {
+	background: white;
 	padding: 5px;
 	display: block;
 	border: 1px solid black;
@@ -68,6 +70,13 @@
 
 .hitbox-tag-input {
 	width: 40px;
+}
+
+.frame-data-alt {
+	padding: 2px;
+    border: 1px solid blueviolet;
+    margin: 2px 0px 2px 0px;
+    background: #e1d7e9;
 }
 
 .frame-data {
@@ -92,17 +101,30 @@
 }
 
 .canvas-wrapper {
+	height: 60%;
 	overflow: auto;
 	border: 1px solid black;
+	margin: 2px;
+}
+
+.sprite-canvas-controls {
+	height: 40%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	margin: 2px;
 }
 
 .level-canvas-wrapper {
+	margin: 2px;
 	overflow: scroll;
 	background: darkgray;
 	height: 65%;
+	border: 1px black solid;
 }
 
 .level-canvas-buttons {
+	margin: 2px;
 	height: 35%;
 	display: flex;
     flex-direction: column;
@@ -154,17 +176,30 @@
 	height: 22px;
 }
 
+.frame-list-container {
+	height: 40%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	margin: 2px;
+}
+
 .frame-list {
+	background: lightgrey;
 	overflow: auto;
 	border: 1px solid black;
 	height: 100%;
 }
 
-
-#map-properties {
+#map-control-menu {
 	margin-top: 2px;
 	padding: 2px;
 	overflow: auto;
+	border: 1px solid black;
+}
+
+#map-properties {
+	padding: 2px;
 }
 
 #instance-properties {
@@ -208,7 +243,7 @@
 
 #level-editor,
 #sprite-editor {
-	padding: 4px;
+	padding: 2px;
 	white-space: nowrap;
 	height: 100%;
 	display: flex;

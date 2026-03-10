@@ -145,8 +145,8 @@ export class Level {
 	getValidationErrors() {
 		let errors = "";
 
-		if (_.filter(this.instances, i => i.objectName === "Spawn Point").length < 4) {
-			errors += "-Not enough neutral spawn points (minimum 4)\n";
+		if (_.filter(this.instances, i => i.objectName === "Spawn Point").length < 2) {
+			errors += "-Not enough neutral spawn points (minimum 2)\n";
 		}
 		if (this.width > 35000 || this.height > 35000) {
 			errors += "-Map is too large (max 35000x35000)\n";
@@ -154,14 +154,23 @@ export class Level {
 		if (this.instances.some(i => i.objectName === "Map Sprite" && !i.properties.spriteName)) {
 			errors += "-Some map sprites are missing sprites\n";
 		}
-		if ((this.name.endsWith("_md") || this.name.endsWith("_1v1")) && this.instances.some(i => i.objectName === "Red Flag" || i.objectName === "Blue Flag" || i.objectName === "Control Point")) {
+		/*if ((this.name.endsWith("_md") || this.name.endsWith("_1v1")) &&
+			this.instances.some(
+				i => i.objectName === "Red Flag" || i.objectName === "Blue Flag" ||
+				i.objectName === "Control Point")
+		) {
 			errors += "-Can't have flags or control points in 1v1 or medium maps\n";
-		}
-		if (this.instances.some(i => i.objectName === "Goal") && !this.instances.some(i => i.objectName === "Gate")) {
+		}*/
+		if (this.instances.some(i => i.objectName === "Goal") &&
+			!this.instances.some(i => i.objectName === "Gate")
+		) {
 			errors += "-Maps with a goal must also have a gate\n";
 		}
-		if (this.instances.some(i => i.objectName === "Goal") && this.instances.filter(i => i.objectName === "Spawn Point" && i.properties?.raceStartSpawn === true).length < 10) {
-			errors += "-Maps with a goal must also have 10 spawn points with Race Spawn property set\n";
+		if (this.instances.some(i => i.objectName === "Goal") &&
+			this.instances.filter(i => i.objectName === "Spawn Point" &&
+				i.properties?.raceStartSpawn === true).length < 1
+		) {
+			errors += "-Maps with a goal must also have at least 1 spawn point with Race Spawn property set\n";
 		}
 		/*
 		if (this.instances.filter(i => i.objectName === "Goal").length > 1) {
@@ -553,5 +562,25 @@ export class Level {
 			}
 			this.mergedWalls.push(points);
 		}
+	}
+
+	getNonMirroredName() {
+		if (this.isMirrorJson()) {
+			let suffix = "_mirrored";
+			if (this.name.endsWith(suffix)) {
+				return this.name.slice(0, -suffix.length);
+			}
+		}
+		return this.name;
+	}
+
+	getFolderName() {
+		if (this.path.includes("/maps/")) {
+			return this.path.split("/maps/")[1].split("/")[0];
+		}
+		else if (this.path.includes("/maps_custom/")) {
+			return this.path.split("/maps_custom/")[1].split("/")[0];
+		}
+		return this.getNonMirroredName();
 	}
 }

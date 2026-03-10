@@ -25,8 +25,14 @@ export class CanvasUI {
 	//All these mouse values below are "normalized" to the current zoom. Only rawMouseX and rawMouseY variables are the real values
 	mouseX: number = 0;
 	mouseY: number = 0;
+	mouseFX: number = 0;
+	mouseFY: number = 0;
+	rawMouseX: number = 0;
+	rawMouseY: number = 0;
 	deltaX: number = 0;
 	deltaY: number = 0;
+	tempDeltaX: number = 0;
+	tempDeltaY: number = 0;
 	lastClickX: number = 0;
 	lastClickY: number = 0;
 	private dragStartX: number = 0;
@@ -95,34 +101,27 @@ export class CanvasUI {
 		}
 
 		this.canvas.onmousemove = (event: MouseEvent) => {
+			let oldMouseX = this.mouseFX;
+			let oldMouseY = this.mouseFY;
 
-			let oldMouseX = this.mouseX;
-			let oldMouseY = this.mouseY;
+			let rect = this.canvas.getBoundingClientRect();
+			this.rawMouseX = event.clientX - rect.left;
+			this.rawMouseY = event.clientY - rect.top;
 
-			let offsetLeft = this.wrapper.offsetLeft;
-			let offsetTop = this.wrapper.offsetTop;
+			this.mouseFX = this.rawMouseX / this.zoom;
+			this.mouseFY = this.rawMouseY / this.zoom;
+			this.mouseX = Math.round(this.mouseFX);
+			this.mouseY = Math.round(this.mouseFY);
 
-			let rawMouseX = event.pageX - offsetLeft + this.getScrollLeft();
-			let rawMouseY = event.pageY - offsetTop + this.getScrollTop();
+			let fDeltaX = this.mouseFX - oldMouseX;
+			let fDeltaY = this.mouseFY - oldMouseY;
+			let iDeltaX = Math.floor(Math.abs(this.tempDeltaX)) * Math.sign(this.tempDeltaX);
+			let iDeltaY = Math.floor(Math.abs(this.tempDeltaY)) * Math.sign(this.tempDeltaY);
+			this.tempDeltaX += fDeltaX - iDeltaX;
+			this.tempDeltaY += fDeltaY - iDeltaY;
 
-			if (!this.isNoScrollZoom) {
-				this.mouseX = rawMouseX / this.zoom;
-				this.mouseY = rawMouseY / this.zoom;
-			}
-			else if (this.isLevelEditor) {
-				this.mouseX = rawMouseX / this.zoom;
-				this.mouseY = rawMouseY / this.zoom;
-			}
-			else {
-				this.mouseX = rawMouseX;
-				this.mouseY = rawMouseY;
-			}
-
-			this.mouseX += this.offsetX;
-			this.mouseY += this.offsetY;
-
-			this.deltaX = this.mouseX - oldMouseX;
-			this.deltaY = this.mouseY - oldMouseY;
+			this.deltaX = iDeltaX;
+			this.deltaY = iDeltaY;
 
 			if (this.mousedown) {
 				this.dragEndX = this.mouseX;
@@ -130,7 +129,6 @@ export class CanvasUI {
 			}
 
 			this.onMouseMove(this.deltaX, this.deltaY);
-
 		}
 
 		this.canvas.onmousedown = (e: MouseEvent) => {

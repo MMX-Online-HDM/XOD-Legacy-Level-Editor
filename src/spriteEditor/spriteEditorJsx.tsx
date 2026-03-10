@@ -11,18 +11,6 @@ export function render(t: SpriteEditor): JSX.Element {
 			<div id="soj" style={{ visibility: t.isLoading ? "visible" : "hidden" }}>
 				<span id="soj-text">Loading...</span>
 			</div>
-			<div className="top-menu">
-				<div>Version: {t?.config?.version} | F1: Hotkeys | Asset path: {t?.config?.assetPath}</div>
-				<button onClick={() => t.reload()}>Reload Editor</button>&nbsp;
-				{!t.customMapContext && <button onClick={() => t.onSwapFolderClick()}>{t.getSwapFolderButtonText()}</button>}
-				{
-					/*
-					<span>Window Zoom Level: {t.windowZoom * 100}%</span>
-					<button onClick={() => t.decreaseWindowZoom()}>Zoom Out</button>
-					<button onClick={() => t.increaseWindowZoom()}>Zoom In</button>
-					*/
-				}
-			</div>
 			<div id="sprite-editor">
 				{renderSpriteListContainer(t)}
 				{renderSpriteCanvas(t)}
@@ -38,7 +26,8 @@ function renderSpriteListContainer(t: SpriteEditor): JSX.Element {
 
 	return (
 		<div className="sprite-list-container">
-			<h1>{t?.config?.isInSpriteModFolder ? "Sprite Mods" : "Game Sprites"}</h1>
+			<h2 style={{ marginBlock: "6px" }}
+			>{t?.config?.isInSpriteModFolder ? "Sprite Mods" : "Game Sprites"}</h2>
 			{
 				!state.newSpriteActive &&
 				<button onClick={() => t.newSprite()}>New Sprite</button>
@@ -75,7 +64,7 @@ function renderSpriteListContainer(t: SpriteEditor): JSX.Element {
 					<option value="endswith">Ends with</option>
 				</select>
 			</div>
-			<div className="sprite-list-scroll">
+			<div style={{ marginTop: "4px", borderTop: "1px solid black" }} className="sprite-list-scroll">
 				{
 					t.getFilteredSprites().map((sprite, index) => (
 						<div key={sprite.name} className={"sprite-item" + (sprite.name === state.selectedSprite?.name ? " selected" : "")} onClick={e => t.changeSprite(global.sprites.indexOf(sprite), false)}>
@@ -94,19 +83,11 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 	return (
 		<div className="canvas-section">
 			<div className="canvas-wrapper" style={{ height: "60%" }} tabIndex={1}>
-				<canvas id="canvas1" width="700" height="600"></canvas>
+				<canvas id="canvas1" width="1024" height="1024"></canvas>
 			</div>
 			{
 				state.selectedSprite &&
-				<div id="app2" style={{
-					height: "40%",
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "flex-start",
-					overflow: "hidden",
-					margin: "4px 4px 0px 4px",
-					border: 4
-				}}>
+				<div id="app2" className="sprite-canvas-controls"frame-data>
 					{
 						//<button onClick={e => t.forceAllDirty()}>Force all dirty</button>
 						//<button onClick={e => t.undo()}>Undo</button>
@@ -122,7 +103,6 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 						<div className="canvas-sprbutton">
 							<button onClick={e => t.playAnim()}>{state.isAnimPlaying ? "Stop" : "Play"}</button>
 							<button onClick={e => t.saveSprite()} disabled={!state.isSelectedSpriteDirty()}>Save</button>
-							<button onClick={e => t.saveSprites()} disabled={!t.isAnySpriteDirty()}>Save All</button>
 							<button onClick={e => t.csssd()}>Force Dirty</button>
 						</div>
 						<div className="canvas-sprbutton">Zoom Level: <input style={{ width: "50px" }} type="number" value={t.getZoom().toString()} onChange={e => t.setZoom(e.target.valueAsNumber)} /></div>
@@ -160,7 +140,7 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 						<div className="hitbox-section">
 							Global Hitboxes<br />
 							{state.selectedSprite.hitboxes?.map((hitbox, index) => (
-								<div key={hitbox.selectableId} className={"frame-data" + (state.selection?.selectableId === hitbox.selectableId ? " selected-frame" : "")}>
+								<div key={hitbox.selectableId} className={"frame-data-alt" + (state.selection?.selectableId === hitbox.selectableId ? " selected-frame" : "")}>
 									w<NumberInput initialValue={hitbox.width} onSubmit={num => { hitbox.width = num; t.csssd(); }} />
 									h<NumberInput initialValue={hitbox.height} onSubmit={num => { hitbox.height = num; t.csssd(); }} />
 									x-off<NumberInput initialValue={hitbox.offset.x} onSubmit={num => { hitbox.offset.x = num; t.csssd(); }} />
@@ -186,7 +166,7 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 							<div className="hitbox-section">
 								Frame Hitboxes<br />
 								{state.selectedFrame.hitboxes?.map((hitbox, index) => (
-									<div key={hitbox.selectableId} className={'frame-data' + (state.selection?.selectableId === hitbox.selectableId ? ' selected-frame' : '')}>
+									<div key={hitbox.selectableId} className={"frame-data-alt" + (state.selection?.selectableId === hitbox.selectableId ? ' selected-frame' : '')}>
 										w<NumberInput initialValue={hitbox.width} onSubmit={num => { hitbox.width = num; t.csssd(); }} />
 										h<NumberInput initialValue={hitbox.height} onSubmit={num => { hitbox.height = num; t.csssd(); }} />
 										x<NumberInput initialValue={hitbox.offset.x} onSubmit={num => { hitbox.offset.x = num; t.csssd(); }} />
@@ -214,7 +194,7 @@ function renderSpriteCanvas(t: SpriteEditor): JSX.Element {
 							<div className="hitbox-section">
 								Frame POIs<br />
 								{state.selectedFrame.POIs?.map((poi, index) => (
-									<div key={poi.selectableId} className={'frame-data' + (state.selection?.selectableId === poi.selectableId ? ' selected-frame' : '')}>
+									<div key={poi.selectableId} className={"frame-data-alt" + (state.selection?.selectableId === poi.selectableId ? ' selected-frame' : '')}>
 										x<NumberInput initialValue={poi.x} onSubmit={num => { poi.x = num; t.csssd(); }} />
 										y<NumberInput initialValue={poi.y} onSubmit={num => { poi.y = num; t.csssd(); }} />
 										<TextInput width="50px" initialValue={poi.tags} onSubmit={str => { poi.tags = str; t.csssd(); }} />
@@ -245,11 +225,11 @@ function renderSpritesheetCanvas(t: SpriteEditor): JSX.Element {
 
 	return (
 		<div className="canvas-section" style={{ width: "30%", flex: "none" }}>
-			<div className="canvas-wrapper" style={{ height: "60%", flex: "none" }} tabIndex={2}>
+			<div className="canvas-wrapper" tabIndex={2}>
 				<canvas id="canvas2"></canvas>
 			</div>
 			{state.selectedSprite && t.selectedSpritesheet &&
-				<div style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+				<div className="frame-list-container">
 					{state.selectedSprite.frames.length > 0 &&
 						<div>
 							<input type="checkbox" checked={state.moveToTopOrBottom} onChange={e => { state.moveToTopOrBottom = e.target.checked; t.changeState(); }} />Frame move/copy to top/bottom<br />

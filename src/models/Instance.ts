@@ -182,9 +182,27 @@ export class Instance {
 	}
 
 	drawShapeInstance(ctx: CanvasRenderingContext2D) {
+		var centerAlpha = 0.3;
+		var lineAlpha = 0.6;
+		var drawOutline = true;
+		if (this.points.length != 4) {
+			centerAlpha = 0.5;
+			drawOutline = false;
+		}
 		DrawWrappers.drawPolygon(
-			ctx, new Shape(this.points), true, this.obj.color, "", 0, 0.2
+			ctx, new Shape(this.points), true, this.obj.color, "", 0, centerAlpha
 		);
+		if (drawOutline) {
+			var pointsAlt = [
+				this.points[0].clone(),
+				this.points[1].addxy(-1, 0),
+				this.points[2].addxy(-1, -1),
+				this.points[3].addxy(0, -1)
+			];
+			DrawWrappers.drawPolygon(
+				ctx, new Shape(pointsAlt), true, "", this.obj.color, 1, lineAlpha
+			);
+		}
 	}
 
 	drawMapSpriteInstance(ctx: CanvasRenderingContext2D, viewPort: Rect) {

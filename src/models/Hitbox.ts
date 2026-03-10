@@ -31,8 +31,37 @@ export class Hitbox implements Selectable {
 		this.height += h;
 	}
 
-	getRect() {
-		return new Rect(this.offset.x, this.offset.y, this.offset.x + this.width, this.offset.y + this.height);
+	getRect(alignment: string) {
+		let hx = 0;
+		let hy = 0;
+		let halfW = this.width * 0.5;
+		let halfH = this.height * 0.5;
+		let w = halfW * 2;
+		let h = halfH * 2;
+		if (alignment === "topmid") {
+			hx = -halfW;
+		}
+		else if (alignment === "topright") {
+			hx = -w;
+		}
+		else if (alignment === "midleft") {
+			hy = -halfH;
+		}
+		else if (alignment === "center") {
+			hx = -halfW; hy = -halfH;
+		}
+		else if (alignment === "midright") {
+			hx = -w; hy = -halfH;
+		}
+		else if (alignment === "botleft") {
+			hy = -h;
+		}
+		else if (alignment === "botmid") {
+			hx = -halfW; hy = -h;
+		}
+		else if (alignment === "botright") {
+			hx = -w; hy = -h;
+		}
+		return new Rect(hx, hy, hx + this.width, hy + this.height);
 	}
-
 }

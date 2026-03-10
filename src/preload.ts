@@ -1,6 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import { contextBridge, ipcRenderer, webFrame } from "electron"
+import { fileName } from "./helpers";
 
 let callbackMap: { [path: string]: any } = {};
 export function on(callbackName: string, callbackFunc: Function) {
@@ -119,6 +120,18 @@ export const api = {
 
 	setupMapSpriteEditor: async (json: any) => {
 		return await send("setupMapSpriteEditor", json);
+	},
+
+	mountSpriteMenu: async(flags: boolean[]) => {
+		return await send("mountSpriteMenu", flags);
+	},
+
+	updateSpriteMenu: async(flags: boolean[]) => {
+		return await send("updateSpriteMenu", flags);
+	},
+
+	mountMapMenu: async(flags: boolean[]) => {
+		return await send("mountMapMenu", flags);
 	},
 
 	/** Provide an easier way to listen to events */

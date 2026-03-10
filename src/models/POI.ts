@@ -24,7 +24,7 @@ export class POI implements Selectable {
 	}
 	resizeCenter(w: number, h: number): void {
 	}
-	getRect(): Rect {
-		return new Rect(this.x - 2, this.y - 2, this.x + 2, this.y + 2);
+	getRect(alignment: string): Rect {
+		return new Rect(this.x - 1, this.y - 1, this.x + 1, this.y + 1);
 	}
 }

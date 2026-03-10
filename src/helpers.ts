@@ -1,5 +1,4 @@
-// Put stuff in this file that has minimal dependencies so the main.ts can use it
-
+// Put stuff in this file that has minimal dependencies so the index.ts can use it
 import * as _ from "lodash";
 
 export function inCircle(x: number, y: number, circleX: number, circleY: number, r: number): boolean {
@@ -226,6 +225,10 @@ export function getNormalizedSpritesheetName(customMapName: string, rawSpriteshe
 	if (customMapName) {
 		spritesheetBaseName = customMapName + ":" + spritesheetBaseName;
 	}
+	else if (rawSpritesheetPath.includes("/maps/")) {
+		customMapName = rawSpritesheetPath.split("/maps/")[1].split("/")[0];
+		spritesheetBaseName = customMapName + ":" + spritesheetBaseName;
+	}
 	else if (rawSpritesheetPath.includes("/maps_custom/")) {
 		customMapName = rawSpritesheetPath.split("/maps_custom/")[1].split("/")[0];
 		spritesheetBaseName = customMapName + ":" + spritesheetBaseName;
@@ -233,8 +236,59 @@ export function getNormalizedSpritesheetName(customMapName: string, rawSpriteshe
 	return spritesheetBaseName;
 }
 
+export function getShortPath(rawSpritesheetPath: string) {
+	let spritesheetBaseName = rawSpritesheetPath;
+
+	if (rawSpritesheetPath.includes("/spritesheets/")) {
+		spritesheetBaseName = "spritesheets/" + rawSpritesheetPath.split("/spritesheets/")[1]
+	}
+	else if (rawSpritesheetPath.includes("/maps_shared/")) {
+		spritesheetBaseName = "maps_shared/" + rawSpritesheetPath.split("/maps_shared/")[1]
+	}
+	else if (rawSpritesheetPath.includes("/maps/")) {
+		let customMapName = rawSpritesheetPath.split("/maps/")[1].split("/")[0];
+		spritesheetBaseName = "./" + rawSpritesheetPath.split("/maps/")[1].split(customMapName + "/")[1];;
+	}
+	else if (rawSpritesheetPath.includes("/maps_custom/")) {
+		let customMapName = rawSpritesheetPath.split("/maps_custom/")[1].split("/")[0];
+		spritesheetBaseName = "./" + rawSpritesheetPath.split("/maps_custom/")[1].split(customMapName + "/")[1];
+	}
+	return spritesheetBaseName;
+}
+
+export function mapPath(rawSpritesheetPath: string) {
+	if (rawSpritesheetPath.includes("/maps/")) {
+		return rawSpritesheetPath.split("/maps/")[1].split("/")[0];
+	}
+	else if (rawSpritesheetPath.includes("/maps_custom/")) {
+		return rawSpritesheetPath.split("/maps_custom/")[1].split("/")[0];
+	}
+	return "";
+}
+
+
+export function getSheetUID(rawSpritesheetPath: string) {
+	let spritesheetBaseName = rawSpritesheetPath;
+
+	if (rawSpritesheetPath.includes("/spritesheets/")) {
+		spritesheetBaseName = "spritesheets/" + rawSpritesheetPath.split("/spritesheets/")[1]
+	}
+	else if (rawSpritesheetPath.includes("/maps_shared/")) {
+		spritesheetBaseName = "maps_shared/" + rawSpritesheetPath.split("/maps_shared/")[1]
+	}
+	else if (rawSpritesheetPath.includes("/maps/")) {
+		spritesheetBaseName = "maps/" + rawSpritesheetPath.split("/maps/")[1];
+	}
+	else if (rawSpritesheetPath.includes("/maps_custom/")) {
+		spritesheetBaseName = "maps_custom/" + rawSpritesheetPath.split("/maps_custom/")[1];
+	}
+	return spritesheetBaseName;
+}
+
 export function baseName(filepath: string) {
-	if (!filepath) return filepath;
+	if (!filepath) {
+		return filepath;
+	}
 	var base = new String(filepath).substring(filepath.lastIndexOf('/') + 1);
 	if (base.lastIndexOf(".") != -1)
 		base = base.substring(0, base.lastIndexOf("."));

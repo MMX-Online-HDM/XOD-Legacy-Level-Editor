@@ -20,6 +20,7 @@ import { Config } from "../config";
 import { BaseEditor } from "../baseEditor";
 import { get2DArrayFromImage, getPixelClumpRect, getSelectedPixelRect } from "../pixelClump";
 import { JSX } from "react/jsx-runtime";
+import { app } from "electron";
 
 export class Ghost {
 	sprite: Sprite;
@@ -136,7 +137,6 @@ export class SpriteEditorState {
 }
 
 export class SpriteEditor extends BaseEditor<SpriteEditorState> {
-
 	spriteCanvas: SpriteCanvas | undefined;
 	spritesheetCanvas: SpritesheetCanvas | undefined;
 	animTime: number = 0;
@@ -204,7 +204,6 @@ export class SpriteEditor extends BaseEditor<SpriteEditorState> {
 	}
 
 	async fetchAllData() {
-
 		try {
 			let configData = await window.Main.getConfig();
 
@@ -241,45 +240,51 @@ export class SpriteEditor extends BaseEditor<SpriteEditorState> {
 			this.isLoading = false;
 			this.changeState();
 
-			if (!this.config.isProd) {
+			/*if (!this.config.isProd) {
 				this.getNoHeadshotSprites();
-			}
+			}*/
 		}
 		catch (error) {
 			window.Main.showError("Error", error.toString());
 			this.isLoading = false;
 			this.forceUpdate();
 		}
+		this.mountSpriteMenu();
 	}
 
-	mountMenu() {
-		/*let template: MenuItemConstructorOptions[] = [{
-			label: "&File",
-			submenu: [
-				{ label: "Visualmods", click: () => { } },
-				{ label: "Save All", click: () => { } },
-				{ label: "Reload", click: () => { } }
-			]
-		}, {
-			label: "&Edit",
-			submenu: [
-				{ label: "Undo", click: () => { } },
-				{ label: "Redo", click: () => { } },
-				{ label: "Ghost mode", click: () => { } },
-				{ label: "Remove ghost", click: () => { } },
-				{ label: "Copy shape", click: () => { } },
-			]
-		}, {
-			label: "&Help",
-			submenu: [
-				{ label: "Hotkeys", click: () => { this.input.showHelp() } },
-				{ role: 'toggleDevTools' },
-				{ label: "Asset Path", click: () => { } },
-				{ label: "Version" },
-			]
-		}];
-		let menu = Menu.buildFromTemplate(template);
-		Menu.setApplicationMenu(menu);*/
+	mountSpriteMenu() {
+		// Set up main menu.
+		window.Main.mountSpriteMenu(this.getMenuFlags());
+		// File menu.
+		window.Main.on("visualModBT", () => {
+			this.onSwapFolderClick();
+		});
+		window.Main.on("spriteToMapBT", () => {
+			this.onSwapFolderClick();
+		});
+		window.Main.on("reloadBT", () => { this.reload(); });
+		window.Main.on("saveAllBT", () => { if (this.isAnySpriteDirty()) { this.saveSprites(); } });
+		// Edit menu.
+		window.Main.on("undoBT", () => { this.undo(); });
+		window.Main.on("redoBT", () => { this.redo(); });
+		window.Main.on("ghostModeBT", () => { this.input.enableGhost(); });
+		window.Main.on("removeGhostBT", () => { this.input.disableGhost(); });
+		// Help menu.
+		window.Main.on("helpBT", () => { this.input.showHelp(); } );
+	}
+
+	// Sends the update menu with correct flags.
+	updateSpriteMenu() {
+		window.Main.updateSpriteMenu(this.getMenuFlags());
+	}
+
+	// Get the flags for the menu.
+	getMenuFlags(): boolean[] {
+		let visualMods = false;
+		if (this.config != null) {
+			visualMods = this.config.isInSpriteModFolder;
+		}
+		return [visualMods];
 	}
 
 	render(): JSX.Element {

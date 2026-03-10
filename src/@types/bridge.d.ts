@@ -5,4 +5,7 @@ declare global {
 	interface Window {
 		Main: typeof api
 	}
+	interface Window {
+		menuApi: typeof menuApi
+	}
 }

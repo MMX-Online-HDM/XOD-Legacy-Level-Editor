@@ -45,17 +45,12 @@ export class SpriteEditorInput extends GlobalInput {
 		let state = this.spriteEditor.data;
 
 		if (keyCode === KeyCode.ESCAPE) {
-			if (state.selectionId !== -1 || state.ghost !== undefined) {
-				state.selectionId = -1;
-				state.ghost = undefined;
-				this.spriteEditor.changeState();
-			}
+			this.disableGhost();
 		}
 
 		if (state.selectedFrame && state.selectedSprite) {
 			if (keyCode === KeyCode.G) {
-				state.ghost = new Ghost(state.selectedSprite as Sprite, state.selectedFrame as Frame);
-				this.spriteEditor.changeState();
+				this.enableGhost();
 			}
 			else if (keyCode === KeyCode.H) {
 				this.spriteEditor.changeAddPOIMode(true, "h");
@@ -146,6 +141,25 @@ export class SpriteEditorInput extends GlobalInput {
 	}
 
 	onKeyUp(e: KeyboardEvent, keyCode: KeyCode) {
+	}
+
+	enableGhost() {
+		let state = this.spriteEditor.data;
+		if (!state.selectedFrame || !state.selectedSprite) {
+			return;
+		}
+		state.ghost = new Ghost(state.selectedSprite as Sprite, state.selectedFrame as Frame);
+		this.spriteEditor.changeState()
+	}
+
+	disableGhost() {
+		let state = this.spriteEditor.data;
+		if (state.selectionId === -1) {
+			return;
+		}
+		state.selectionId = -1;
+		state.ghost = undefined;
+		this.spriteEditor.changeState();
 	}
 
 	showHelp() {

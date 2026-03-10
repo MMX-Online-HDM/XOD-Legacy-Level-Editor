@@ -143,7 +143,37 @@ export class LevelCanvas extends CanvasUI {
 		}
 
 		if (data.toggleShowCamBounds) {
-			DrawWrappers.drawRect(ctx, new Rect(this.mouseX - 149, this.mouseY - 112, this.mouseX + 149, this.mouseY + 112), "", "green", null);
+			let sizeX = 384 / 2;
+			let sizeY = 216 / 2;
+			let len = 10000;
+			let drawPosX = this.mouseX;
+			let drawPosY = this.mouseY;
+
+			DrawWrappers.drawRect(
+				ctx,
+				new Rect(drawPosX - 1000, drawPosY - 1000, drawPosX + 1000, drawPosY - sizeY),
+				"black", "", 0, 0.75
+			);
+			DrawWrappers.drawRect(
+				ctx,
+				new Rect(drawPosX - 1000, drawPosY + sizeY, drawPosX + 1000, drawPosY + 1000),
+				"black", "", 0, 0.75
+			);
+			DrawWrappers.drawRect(
+				ctx,
+				new Rect(drawPosX - 1000, drawPosY - sizeY, drawPosX - sizeX, drawPosY + sizeY),
+				"black", "", 0, 0.75
+			);
+			DrawWrappers.drawRect(
+				ctx,
+				new Rect(drawPosX + sizeX, drawPosY - sizeY, drawPosX + 1000, drawPosY + sizeY),
+				"black", "", 0, 0.75
+			);
+			DrawWrappers.drawRect(
+				ctx,
+				new Rect(drawPosX - sizeX - 1, drawPosY - sizeY - 1, drawPosX + sizeX, drawPosY + sizeY),
+				"", "green", 1
+			);
 		}
 
 		if (data.selectedLevel && data.selectedLevel.mirrorX > 0) {
@@ -191,9 +221,12 @@ export class LevelCanvas extends CanvasUI {
 				if (selectedParallax.isLargeCamOverride) continue;
 				let pX = selectedParallax.startX ?? 0;
 				let pY = selectedParallax.startY ?? 0;
+				let sizeX = 384 / 2;
+				let sizeY = 216 / 2;
+
 				if (data.selectedLevel && data.toggleShowCamBounds) {
-					pX += Helpers.clamp(this.mouseX - 149, 0, canvas.width) * selectedParallax.speedX;
-					pY += Helpers.clamp(this.mouseY - 112, 0, canvas.height) * selectedParallax.speedY;
+					pX += Helpers.clamp(this.mouseX - sizeX, 0, canvas.width) * selectedParallax.speedX;
+					pY += Helpers.clamp(this.mouseY - sizeY, 0, canvas.height) * selectedParallax.speedY;
 				}
 
 				if (selectedParallaxSpritesheet?.imgEl && data.showParallaxes) {
@@ -218,9 +251,12 @@ export class LevelCanvas extends CanvasUI {
 				if (selectedParallax.isLargeCamOverride) continue;
 				let pX = selectedParallax.startX ?? 0;
 				let pY = selectedParallax.startY ?? 0;
+				let sizeX = 384 / 2;
+				let sizeY = 216 / 2;
+
 				if (data.selectedLevel && data.toggleShowCamBounds) {
-					pX += Helpers.clamp(this.mouseX - 149, 0, canvas.width) * selectedParallax.speedX;
-					pY += Helpers.clamp(this.mouseY - 112, 0, canvas.height) * selectedParallax.speedY;
+					pX += Helpers.clamp(this.mouseX - sizeX, 0, canvas.width) * selectedParallax.speedX;
+					pY += Helpers.clamp(this.mouseY - sizeY, 0, canvas.height) * selectedParallax.speedY;
 				}
 
 				if (selectedParallaxSpritesheet?.imgEl && data.showParallaxes) {
@@ -330,7 +366,6 @@ export class LevelCanvas extends CanvasUI {
 	}
 
 	onKeyDown(keyCode: KeyCode, firstFrame: boolean) {
-
 		let data = this.levelEditor.data;
 		if (!data.selectedLevel) return;
 
@@ -349,7 +384,7 @@ export class LevelCanvas extends CanvasUI {
 		}
 
 		if (keyCode === KeyCode.B) {
-			data.toggleShowCamBounds = !data.toggleShowCamBounds;
+			this.toggleBounds();
 		}
 
 		if (keyCode === KeyCode.SPACE) {
@@ -376,10 +411,24 @@ export class LevelCanvas extends CanvasUI {
 			this.levelEditor.switchTool(new SelectTool(this.levelEditor));
 		}
 
-		if ((keyCode === KeyCode.SPACE || keyCode === KeyCode.TAB || keyCode === KeyCode.CONTROL || keyCode === KeyCode.ALT)) {
+		/*if (keyCode === KeyCode.SPACE ||
+			keyCode === KeyCode.TAB ||
+			keyCode === KeyCode.CONTROL ||
+			keyCode === KeyCode.ALT
+		) {
 			// e.preventDefault();
-		}
+		}*/
 
 		this.levelEditor.redraw();
+	}
+
+	toggleBounds() {
+		let data = this.levelEditor.data;
+		data.toggleShowCamBounds = !data.toggleShowCamBounds;
+	}
+
+	snapShape() {
+		let data = this.levelEditor.data;
+		data.toggleShowCamBounds = !data.toggleShowCamBounds;
 	}
 }

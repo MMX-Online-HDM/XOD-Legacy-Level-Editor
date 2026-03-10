@@ -337,6 +337,10 @@ export class SelectTool extends Tool {
 
 	onKeyDown(keyCode: KeyCode, oneFrame: boolean) {
 		let data = this.levelEditor.data;
+		let units = 1;
+		if (this.levelEditor.data.snapCollision) {
+			units = this.levelEditor.data.snapSize;
+		}
 		if (keyCode === KeyCode.TAB && data.selectedInstances.length === 1 && data.selectedInstances[0].isShape) {
 			this.levelEditor.switchTool(new SelectVertexTool(this.levelEditor));
 			this.levelEditor.redraw();
@@ -435,31 +439,31 @@ export class SelectTool extends Tool {
 
 		// SHAPE SECTION MOVE/RESIZE
 		if (data.selectedInstances.length === 1 && data.selectedInstances[0].isShape) {
-			if (!this.keysHeld.has(KeyCode.SHIFT)) {
+			if (this.keysHeld.has(KeyCode.SHIFT)) {
 				if (keyCode === KeyCode.A) {
 					for (var selection of data.selectedInstances) {
-						selection.resize(-1, 0, "w-resize");
+						selection.resize(-units, 0, "w-resize");
 						stateChanged = true;
 						dirtyChanged = true;
 					}
 				}
 				else if (keyCode === KeyCode.D) {
 					for (var selection of data.selectedInstances) {
-						selection.resize(1, 0, "w-resize");
+						selection.resize(units, 0, "w-resize");
 						stateChanged = true;
 						dirtyChanged = true;
 					}
 				}
 				else if (keyCode === KeyCode.W) {
 					for (var selection of data.selectedInstances) {
-						selection.resize(0, -1, "n-resize");
+						selection.resize(0, -units, "n-resize");
 						stateChanged = true;
 						dirtyChanged = true;
 					}
 				}
 				else if (keyCode === KeyCode.S) {
 					for (var selection of data.selectedInstances) {
-						selection.resize(0, 1, "n-resize");
+						selection.resize(0, units, "n-resize");
 						stateChanged = true;
 						dirtyChanged = true;
 					}
@@ -469,28 +473,28 @@ export class SelectTool extends Tool {
 				//resizeDir can be: ["nw-resize", "n-resize", "ne-resize", "e-resize", "se-resize", "s-resize", "sw-resize", "w-resize"];
 				if (keyCode === KeyCode.A) {
 					for (var selection of data.selectedInstances) {
-						selection.resize(-1, 0, "e-resize");
+						selection.resize(-units, 0, "e-resize");
 						stateChanged = true;
 						dirtyChanged = true;
 					}
 				}
 				else if (keyCode === KeyCode.D) {
 					for (var selection of data.selectedInstances) {
-						selection.resize(1, 0, "e-resize");
+						selection.resize(units, 0, "e-resize");
 						stateChanged = true;
 						dirtyChanged = true;
 					}
 				}
 				else if (keyCode === KeyCode.W) {
 					for (var selection of data.selectedInstances) {
-						selection.resize(0, -1, "s-resize");
+						selection.resize(0, -units, "s-resize");
 						stateChanged = true;
 						dirtyChanged = true;
 					}
 				}
 				else if (keyCode === KeyCode.S) {
 					for (var selection of data.selectedInstances) {
-						selection.resize(0, 1, "s-resize");
+						selection.resize(0, units, "s-resize");
 						stateChanged = true;
 						dirtyChanged = true;
 					}
@@ -498,28 +502,28 @@ export class SelectTool extends Tool {
 			}
 			if (keyCode === KeyCode.LEFT) {
 				for (var selection of data.selectedInstances) {
-					selection.move(-1, 0);
+					selection.move(-units, 0);
 					stateChanged = true;
 					dirtyChanged = true;
 				}
 			}
 			else if (keyCode === KeyCode.RIGHT) {
 				for (var selection of data.selectedInstances) {
-					selection.move(1, 0);
+					selection.move(units, 0);
 					stateChanged = true;
 					dirtyChanged = true;
 				}
 			}
 			else if (keyCode === KeyCode.UP) {
 				for (var selection of data.selectedInstances) {
-					selection.move(0, -1);
+					selection.move(0, -units);
 					stateChanged = true;
 					dirtyChanged = true;
 				}
 			}
 			else if (keyCode === KeyCode.DOWN) {
 				for (var selection of data.selectedInstances) {
-					selection.move(0, 1);
+					selection.move(0, units);
 					stateChanged = true;
 					dirtyChanged = true;
 				}
@@ -529,28 +533,28 @@ export class SelectTool extends Tool {
 		else if (data.selectedInstances.length >= 1) {
 			if (keyCode === KeyCode.A) {
 				for (var selection of data.selectedInstances) {
-					selection.move(-1, 0);
+					selection.move(-units, 0);
 					stateChanged = true;
 					dirtyChanged = true;
 				}
 			}
 			else if (keyCode === KeyCode.D) {
 				for (var selection of data.selectedInstances) {
-					selection.move(1, 0);
+					selection.move(units, 0);
 					stateChanged = true;
 					dirtyChanged = true;
 				}
 			}
 			else if (keyCode === KeyCode.W) {
 				for (var selection of data.selectedInstances) {
-					selection.move(0, -1);
+					selection.move(0, -units);
 					stateChanged = true;
 					dirtyChanged = true;
 				}
 			}
 			else if (keyCode === KeyCode.S) {
 				for (var selection of data.selectedInstances) {
-					selection.move(0, 1);
+					selection.move(0, units);
 					stateChanged = true;
 					dirtyChanged = true;
 				}

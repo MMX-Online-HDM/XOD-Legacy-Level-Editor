@@ -3,6 +3,7 @@ import { Sprite } from "../models/Sprite";
 import { Frame } from "../models/Frame";
 import { Spritesheet } from "../models/Spritesheet";
 import * as Helpers from "../helpers";
+import * as Helpers2 from "../helpers2";
 import { Hitbox } from "../models/Hitbox";
 import { Point } from "../models/Point";
 import { Selectable } from "../selectable";
@@ -38,6 +39,7 @@ export class LevelEditorState {
 	hideGizmos: boolean = false;
 	showInstanceLabels: boolean = true;
 	toggleShowCamBounds: boolean = false;
+	didShowCamBounds: boolean = false;
 	showBackground: boolean = true;
 	showBackwall: boolean = true;
 	showForeground: boolean = true;
@@ -177,7 +179,6 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 			this.setOptimizedMode(this.config.optimizedMode, true);
 
 			let spritesheetsData = await window.Main.getSpritesheets();
-
 			_.each(spritesheetsData, (spritesheet: string) => {
 				let spritesheetObj = new Spritesheet(spritesheet);
 				spritesheetObj.loadImage();
@@ -185,7 +186,6 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 			});
 
 			let spritesData = await window.Main.getSprites();
-
 			for (let spriteData of spritesData) {
 				// @ts-ignore
 				let sprite: Sprite = plainToClass(Sprite, spriteData, { excludeExtraneousValues: true });
@@ -194,7 +194,9 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 
 			let backgrounds = await window.Main.getBackgrounds();
 			_.each(backgrounds, (background: string) => {
-				global.backgroundMap[Helpers.getAssetPath(background)] = new Spritesheet(background);
+				let sprite = new Spritesheet(background);
+				global.backgroundMap[Helpers.getAssetPath(background)] = sprite
+				global.backgroundMapAlt[sprite.uid] = sprite;
 			});
 
 			let levelsData = await window.Main.getLevels() as Level[];
@@ -210,34 +212,32 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 			this.isLoading = false;
 			this.forceUpdate();
 		}
+		this.mountMapMenu();
 	}
 
-	mountMenu() {
-		/*let template: Electron.MenuItemConstructorOptions[] = [{
-			label: "&File",
-			submenu: [
-				{ label: "Game sprites", click: () => { } },
-				{ label: "Stage sprites", click: () => { } },
-				{ label: "Save", click: () => { } },
-				{ label: "Reload", click: () => { } }
-			]
-		}, {
-			label: "&Edit",
-			submenu: [
-				{ label: "Undo", click: () => { } },
-				{ label: "Redo", click: () => { } },
-				{ label: "Show bounds", click: () => { } },
-			]
-		}, {
-			label: "&Help",
-			submenu: [
-				{ label: "Keybinds", click: () => { } },
-				{ label: "" },
-			]
-		}];
-		let menu = Electron.Menu.buildFromTemplate(template);
-		Electron.Menu.setApplicationMenu(menu);
-		*/
+	mountMapMenu() {
+		// Set up main menu.
+		window.Main.mountMapMenu(this.getMenuFlags());
+		// File menu.
+		window.Main.on("openBT", () => { this.onSwapFolderClick(); });
+		window.Main.on("reloadBT", () => { this.reload(); });
+		window.Main.on("customMapsBT", () => { this.onSwapFolderClick(); });
+		window.Main.on("editSpritesBT", () => { this.setupMapSpriteEditor(); });
+		// Edit menu.
+		window.Main.on("undoBT", () => { this.undo(); });
+		window.Main.on("redoBT", () => { this.redo(); });
+		window.Main.on("snapShapeBT", () => { this.levelCanvas.snapShape() });
+		window.Main.on("showBoundsBT", () => { this.levelCanvas.toggleBounds() });
+		// Help menu.
+		window.Main.on("helpBT", () => { this.input.showHelp(); } );
+	}
+
+	getMenuFlags(): boolean[] {
+		let visualMods = false;
+		if (this.config != null) {
+			visualMods = this.config.isInMapModFolder;
+		}
+		return [visualMods];
 	}
 
 	runConsoleCommand() {
@@ -417,23 +417,66 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 
 	get availableBackgrounds() {
 		return _.filter(global.backgroundMap, (val, key) => {
-			return val.path.includes("/" + this.data.selectedLevel.name + "/") || val.path.includes("maps_shared");
+			return (
+				val.mapPath == "" ||
+				val.mapPath == this.data.selectedLevel.getFolderName()
+			);
 		});
 	}
 
 	get selectedBackground() {
-		if (!this.data.selectedLevel?.backgroundPath) return undefined;
-		return global.backgroundMap[this.data.selectedLevel.backgroundPath];
+		if (!this.data.selectedLevel?.backgroundPath) {
+			return undefined;
+		}
+		return this.getBackgroundSafe(this.data.selectedLevel.backgroundPath);
 	}
 
 	get selectedBackground2() {
-		if (!this.data.selectedLevel?.backwallPath) return undefined;
-		return global.backgroundMap[this.data.selectedLevel.backwallPath];
+		if (!this.data.selectedLevel?.backwallPath) {
+			return undefined;
+		}
+		return this.getBackgroundSafe(this.data.selectedLevel.backwallPath);
 	}
 
 	get selectedForeground() {
-		if (!this.data.selectedLevel?.foregroundPath) return undefined;
-		return global.backgroundMap[this.data.selectedLevel.foregroundPath];
+		if (!this.data.selectedLevel?.foregroundPath) {
+			return undefined;
+		}
+		return this.getBackgroundSafe(this.data.selectedLevel.foregroundPath);
+	}
+
+	getBackgroundSafe(name: string) : Spritesheet {
+		if (!name) {
+			return null;
+		}
+		let ret = global.backgroundMapAlt[name];
+		if (!ret) {
+			let altName = this.getBgPath(name);
+			let altList = global.backgroundMapAlt;
+			ret = global.backgroundMapAlt[altName];
+		}
+		if (!ret) {
+			return global.backgroundMap[name];
+		}
+		return ret;
+	}
+
+	getBgNameSafe(name: string) : string {
+		if (!name) {
+			return "";
+		}
+		let ret = global.backgroundMap[name];
+		if (!ret) {
+			ret = global.backgroundMapAlt[name];
+		}
+		if (ret) {
+			return ret.name;
+		}
+		return "";
+	}
+
+	getBgPath(fileName: string) : string {
+		return Helpers2.relativeToAbsolutePath(fileName, this);
 	}
 
 	selectedParallax(index: number) {
@@ -554,12 +597,13 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 	}
 
 	onBackgroundChange(newBackgroundPath: string) {
+		let newBackground = this.getBackgroundSafe(newBackgroundPath);
+		this.data.selectedLevel.backgroundPath = newBackground?.uid ?? "";;
 
-		this.data.selectedLevel.backgroundPath = newBackgroundPath;
-
-		let newBackground = global.backgroundMap[newBackgroundPath];
 		if (!newBackground) {
 			// window.Main.showDialog("Error", "Map " + this.data.selectedLevel.name + " is missing background.png image file.");
+			this.changeState();
+			this.redraw(true);
 			return;
 		}
 
@@ -592,7 +636,7 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 			return;
 		}
 
-		let newBackground = global.backgroundMap[newBackgroundPath];
+		let newBackground = this.getBackgroundSafe(newBackgroundPath);
 		if (!newBackground) return;
 
 		if (newBackground.imgEl) {
@@ -629,17 +673,20 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 	}
 
 	onBackwallChange(newBackgroundPath: string) {
-		this.data.selectedLevel.backwallPath = newBackgroundPath;
+		let newBackground = this.getBackgroundSafe(newBackgroundPath);
+		this.data.selectedLevel.backwallPath = newBackground?.uid ?? "";
 		this.commonBackgroundChange(newBackgroundPath, true);
 	}
 
 	onForegroundChange(newBackgroundPath: string) {
-		this.data.selectedLevel.foregroundPath = newBackgroundPath;
+		let newBackground = this.getBackgroundSafe(newBackgroundPath);
+		this.data.selectedLevel.foregroundPath = newBackground?.uid ?? "";
 		this.commonBackgroundChange(newBackgroundPath);
 	}
 
 	onParallaxChange(index: number, newBackgroundPath: string) {
-		this.data.selectedLevel.parallaxes[index].path = newBackgroundPath;
+		let newBackground = this.getBackgroundSafe(newBackgroundPath);
+		this.data.selectedLevel.parallaxes[index].path = newBackground?.uid ?? "";
 		this.commonBackgroundChange(newBackgroundPath);
 	}
 
@@ -826,8 +873,9 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 	}
 
 	redraw(redrawBackgrounds: boolean = false) {
-		if (redrawBackgrounds) {
+		if (redrawBackgrounds || this.data.toggleShowCamBounds || this.data.didShowCamBounds) {
 			this.levelCanvas.redrawBackgrounds();
+			this.data.didShowCamBounds = this.data.toggleShowCamBounds;
 		}
 		this.levelCanvas.redraw();
 	}
