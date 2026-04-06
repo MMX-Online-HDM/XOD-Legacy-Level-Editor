@@ -1,0 +1,13 @@
+[
+	{ "name": "deathmatch", "shortName": "dm" },
+	{ "name": "Team Deathmatch", "shortName": "tdm" },
+	{ "name": "CTF", "shortName": "ctf" },
+	{ "name": "Control Point", "shortName": "cp" },
+	{ "name": "Elimination", "shortName": "elim" },
+	{ "name": "Team Elimination", "shortName": "telim" },
+	{ "name": "King Of The Hill", "shortName": "koth" },
+	{ "name": "Alt Elimination", "shortName": "aelim" },
+	{ "name": "Team Alt Elimination", "shortName": "taelim" },
+	{ "name": "Domination", "shortName": "dom" },
+	{ "name": "Race", "shortName": "race" }
+]

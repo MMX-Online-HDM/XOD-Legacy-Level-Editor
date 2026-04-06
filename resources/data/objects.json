@@ -1,0 +1,263 @@
+[{
+	"name": "Water Zone",
+	"isShape": true,
+	"color": "lightblue",
+	"zIndex": 0,
+	"modeSettings": true
+}, {
+	"name": "Backwall Zone",
+	"isShape": true,
+	"color": "plum",
+	"zIndex": 1,
+	"isArea": true,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "isExclusion", "type": "bool", "name": "Is Exclusion" }
+	]
+}, {
+	"name": "Collision Shape",
+	"isShape": true,
+	"color": "blue",
+	"zIndex": 4,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "boundary", "type": "bool", "name": "Boundary" },
+		{ "id": "pitWall", "type": "bool", "name": "Pit Wall" },
+		{ "id": "unclimbable", "type": "bool", "name": "Unclimbable" },
+		{ "id": "slippery", "type": "bool", "name": "Slippery" },
+		{ "id": "topWall", "type": "bool", "name": "Top Wall" },
+		{ "id": "moveX", "type": "num", "name": "Move X", "mirror": true },
+		{ "id": "moveY", "type": "num", "name": "Move Y" }
+	]
+}, {
+	"name": "Sand Zone",
+	"isShape": true,
+	"color": "#EEDC82",
+	"zIndex": 2,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "climbable", "type": "bool", "name": "climbable" },
+		{ "id": "slippery", "type": "bool", "name": "Slippery" },
+		{ "id": "moveX", "type": "num", "name": "Move X", "mirror": true }
+	]
+}, {
+	"name": "Brake Zone",
+	"isShape": true,
+	"color": "aqua",
+	"zIndex": 5
+}, {
+	"name": "Turn Zone",
+	"isShape": true,
+	"color": "olive",
+	"zIndex": 6,
+	"propieties": [
+		{ "id": "turnDir",
+			"type": "mstr", "name": "Turn Dir", "mirror": true,
+			"options": ["left", "right"], "mirrorOptions": ["right", "left"]
+		},
+		{ "id": "jumpAfterTurn", "type": "bool", "name": "Jump After Turn" }
+	]
+}, {
+	"name": "No Scroll",
+	"isShape": true,
+	"color": "magenta",
+	"zIndex": 7,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "freeDir",
+			"type": "mstr", "name": "Free Dir", "mirror": true,
+			"options": ["left", "right", "up", "down"],
+			"mirrorOptions": ["right", "left", "up", "down"]
+		},
+		{ "id": "snap", "type": "bool", "name": "Snap" }
+	]
+}, {
+	"name": "Kill Zone",
+	"isShape": true,
+	"color": "red",
+	"zIndex": 10,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "killInvuln", "type": "bool", "name": "Kill Invuln" },
+		{ "id": "damage", "type": "num", "name": "Damage", "default": 4 },
+		{ "id": "flinch", "type": "bool", "name": "Flinch" },
+		{ "id": "hitCooldown", "type": "num", "name": "Cooldown", "default": 1 }
+	]
+}, {
+	"name": "Jump Zone",
+	"isShape": true,
+	"color": "green",
+	"zIndex": 11,
+	"propieties": [
+		{ "id": "forceDir",
+			"type": "mstr", "name": "Force Dir", "mirror": true,
+			"options": ["left", "right"], "mirrorOptions": ["right", "left"]
+		},
+		{ "id": "jumpTime", "type": "num", "name": "Jump Time", "default": 0.5 }
+	]
+}, {
+	"name": "Move Zone",
+	"isShape": true,
+	"color": "orange",
+	"zIndex": 12,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "moveX", "type": "num", "name": "Move X", "mirror": true },
+		{ "id": "moveY", "type": "num", "name": "Move Y" }
+	]
+}, {
+	"name": "One Way",
+	"isShape": true,
+	"color": "#73C2FB",
+	"zIndex": 13,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "xDir", "type": "num", "name": "X Dir", "mirror": true },
+		{ "id": "yDir", "type": "num", "name": "Y Dir" }
+	]
+}, {
+	"name": "Ladder",
+	"isShape": true,
+	"color": "yellow",
+	"zIndex": 14,
+	"modeSettings": true
+}, {
+	"name": "Camera Zone",
+	"isShape": true,
+	"color": "lightcoral",
+	"zIndex": 30,
+	"isArea": true
+}, {
+	"name": "Spawn Point",
+	"image": "resources/images/spawnPoint.png",
+	"zIndex": 50,
+	"propieties": [
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true },
+		{ "id": "raceStartSpawn", "type": "bool", "name": "Race Spawn" },
+		{ "id": "teamNum", "type": "num", "default": -1 }
+	]
+}, {
+	"name": "Blue Spawn",
+	"image": "resources/images/blueSpawnPoint.png",
+	"zIndex": 51,
+	"mirrorObj": "Red Spawn",
+	"propieties": [
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true }
+	]
+}, {
+	"name": "Red Spawn",
+	"image": "resources/images/redSpawnPoint.png",
+	"zIndex": 52,
+	"mirrorObj": "Blue Spawn",
+	"propieties": [
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true }
+	]
+}, {
+	"name": "Blue Flag",
+	"image": "resources/images/blueFlag.png",
+	"zIndex": 60,
+	"mirrorObj": "Red Flag"
+}, {
+	"name": "Red Flag",
+	"image": "resources/images/redFlag.png",
+	"zIndex": 61,
+	"mirrorObj": "Blue Flag"
+},{
+	"name": "Control Point",
+	"image": "resources/images/controlPoint.png",
+	"zIndex": 62,
+	"modeSettings": true,
+	"disableMirroring": true,
+	"propieties": [
+		{ "id": "hill", "type": "bool", "name": "Hill" },
+		{ "id": "num", "type": "num", "name": "CP Num", "default": 1 },
+		{ "id": "captureTime", "type": "bool", "name": "Capture Time", "default": 30 },
+		{ "id": "awardTime", "type": "bool", "name": "Time Awarded", "default": 120 },
+		{ "id": "dnim", "type": "num", "name": "DOM Num", "default": 0 }
+	]
+}, {
+	"name": "Large Health",
+	"image": "resources/images/largeHealth.png",
+	"zIndex": 70,
+	"modeSettings": true
+}, {
+	"name": "Small Health",
+	"image": "resources/images/smallHealth.png",
+	"zIndex": 71,
+	"modeSettings": true
+}, {
+	"name": "Large Ammo",
+	"image": "resources/images/largeAmmo.png",
+	"zIndex": 72,
+	"modeSettings": true
+}, {
+	"name": "Small Ammo",
+	"image": "resources/images/smallAmmo.png",
+	"zIndex": 73,
+	"modeSettings": true
+}, {
+	"name": "Ride Armor",
+	"image": "resources/images/rideArmor.png",
+	"zIndex": 80,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "raType", "type": "mstr", "name": "Type", "options": ["N", "K", "H", "F", "B", "G", "D"] },
+		{ "id": "isPlat", "type": "bool", "name": "Penta Mode" },
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true }
+	]
+}, {
+	"name": "Ride Chaser",
+	"image": "resources/images/rideChaser.png",
+	"zIndex": 81,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "isCheckpoint", "type": "bool", "name": "Checkpoint Chaser" },
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true }
+	]
+}, {
+	"name": "Music Source",
+	"image": "resources/images/musicSource.png",
+	"zIndex": 102,
+	"propieties": [
+		{ "id": "musicName", "type": "str" }
+	]
+}, {
+	"name": "Goal",
+	"image": "resources/images/victoryPoint.png",
+	"zIndex": 111,
+	"propieties": [
+		{ "id": "mirroredGoal", "type": "bool", "name": "Mirrored Goal" }
+	]
+}, {
+	"name": "Gate",
+	"isShape": true,
+	"color": "purple",
+	"zIndex": 112,
+	"propieties": [
+		{ "id": "unclimbable", "type": "bool", "name": "Unclimbable" }
+	]
+}, {
+	"name": "Pickup Spawner",
+	"image": "resources/images/mapSpritePlaceholder.png",
+	"zIndex": 85,
+	"modeSettings": true,
+	"link": { "id": "id", "type": "link", "name": "ID", "json": "pickups" }
+}, {
+	"name": "Actor Spawner",
+	"image": "resources/images/mapSpritePlaceholder.png",
+	"zIndex": 82,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "id", "type": "link", "name": "ID", "json": "pickups" },
+		{ "id": "teamNum", "type": "int", "name": "Team", "default": -1 }
+	]
+}, {
+	"name": "Enemy Spawner",
+	"image": "resources/images/mapSpritePlaceholder.png",
+	"zIndex": 83,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "id", "type": "link", "name": "ID", "json": "enemies" },
+		{ "id": "teamNum", "type": "int", "name": "Team", "default": -1 }
+	]
+}]

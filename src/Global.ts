@@ -1,5 +1,5 @@
 import { Level } from "./models/Level";
-import { Obj } from "./models/Obj";
+import { Obj, PropertyData } from "./models/Obj";
 import { Sprite } from "./models/Sprite";
 import { Spritesheet } from "./models/Spritesheet";
 
@@ -11,48 +11,17 @@ class Global {
 	backgroundMapAlt: { [path: string]: Spritesheet } = {};
 	imageMap: { [fileName: string]: HTMLImageElement } = {};
 	nextSelectableId: number = 0;
+	// Minimal ammount for default.
+	// Most objects are external.
 	objects: Obj[] = [
-		new Obj("Collision Shape", true, "blue", "", 1),
+		new Obj("Collision Shape", true, "blue", "", 2),
 
-		new Obj("Water Zone", true, "lightblue", "", -1),
-		new Obj("Backwall Zone", true, "plum", "", 0),
+		new Obj("Node", false, "", "resources/images/graph_node.png", 90, true),
 
-		new Obj("Brake Zone", true, "aqua", "", 1),
-		new Obj("Turn Zone", true, "olive", "", 1.5),
+		new Obj("Map Sprite", false, "", "resources/images/mapSpritePlaceholder.png", 100),
+		new Obj("Moving Platform", false, "", "resources/images/mapSpritePlaceholder.png", 101),
 
-		new Obj("No Scroll", true, "magenta", "", 2),
-		new Obj("Kill Zone", true, "red", "", 3),
-		new Obj("Jump Zone", true, "green", "", 4),
-		new Obj("Move Zone", true, "orange", "", 5),
-
-		new Obj("Ladder", true, "yellow", "", 6),
-
-		new Obj("Spawn Point", false, "", "resources/images/spawnPoint.png", 7),
-		new Obj("Red Spawn", false, "", "resources/images/redSpawnPoint.png", 8),
-		new Obj("Blue Spawn", false, "", "resources/images/blueSpawnPoint.png", 9),
-
-		new Obj("Red Flag", false, "", "resources/images/redFlag.png", 10),
-		new Obj("Blue Flag", false, "", "resources/images/blueFlag.png", 11),
-		new Obj("Control Point", false, "", "resources/images/controlPoint.png", 12),
-
-		new Obj("Large Health", false, "", "resources/images/largeHealth.png", 13),
-		new Obj("Small Health", false, "", "resources/images/smallHealth.png", 14),
-		new Obj("Large Ammo", false, "", "resources/images/largeAmmo.png", 15),
-		new Obj("Small Ammo", false, "", "resources/images/smallAmmo.png", 16),
-
-		new Obj("Ride Armor", false, "", "resources/images/rideArmor.png", 17),
-		new Obj("Ride Chaser", false, "", "resources/images/rideChaser.png", 18),
-
-		new Obj("Node", false, "", "resources/images/graph_node.png", 19, true),
-
-		new Obj("Map Sprite", false, "", "resources/images/mapSpritePlaceholder.png", 19),
-		new Obj("Moving Platform", false, "", "resources/images/mapSpritePlaceholder.png", 19.5),
-		new Obj("Music Source", false, "", "resources/images/musicSource.png", 19.75),
-
-		new Obj("Jape Memorial", false, "", "resources/images/japeMemorial.png", 20),
-
-		new Obj("Goal", false, "", "resources/images/victoryPoint.png", 21),
-		new Obj("Gate", true, "purple", "", 22),
+		new Obj("Jape Memorial", false, "", "resources/images/japeMemorial.png", 110),
 	];
 	alignments: string[] = ["topleft", "topmid", "topright", "midleft", "center", "midright", "botleft", "botmid", "botright"];
 	wrapModes: string[] = ["loop", "once"];
@@ -90,6 +59,117 @@ class Global {
 		return this.nextSelectableId++;
 	}
 
+	initLinks(folders: string[]) {
+	}
+
+	initObjects(jsonData: any) {
+		let objs: ObjJsonData[] = jsonData
+
+		for (let i = 0; i < objs.length; i++) {
+			if (!objs[i].name) {
+				continue;
+			}
+			// Init the object.
+			let tempObj = new Obj(
+				objs[i].name, objs[i].isShape ?? false,
+				objs[i].color ?? "", objs[i].image ?? "",
+				objs[i].zIndex, false, objs[i].size ?? [16, 16],
+				objs[i].isArea ?? false, objs[i].minSize ?? [1, 1]
+			)
+			tempObj.modeSettings = objs[i].modeSettings ?? false;
+			tempObj.disableMirroring = objs[i].disableMirroring ?? false;
+			tempObj.mirrorObj = objs[i].mirrorObj ?? "";
+
+			// Parse propieties.
+			let prop = tempObj.baseProperties;
+			let propLength = -1;
+			if (objs[i].propieties) {
+				propLength = objs[i].propieties.length;
+			}
+			for (let j = 0; j < propLength; j++) {
+				// Get values.
+				let propData = objs[i].propieties[j];
+				let newProp = new PropertyData();
+				// Match data.
+				newProp.name = propData.id;
+				newProp.displayName = propData.name ?? propData.id;
+				newProp.type = propData.type;
+				newProp.mirror = propData.mirror ?? false;
+				newProp.options = propData.options ?? null;
+				newProp.mirrorOptions = propData.mirrorOptions ?? null;
+				newProp.linkData = propData.linkData ?? null;
+				let def : any = propData.default ?? null;
+				if (def == null) {
+					if (propData.type == "link" && propData.linkData?.length > 0) {
+						def = propData.linkData[0].id;
+					} else if (propData.options?.length > 0) {
+						def = propData.options[0];
+					}
+					else if (propData.type == "bool") {
+						def = true;
+					}
+					else if (
+						propData.type == "mstr" ||
+						propData.type == "str" ||
+						propData.type == "link"
+					) {
+						def = "";
+					}
+					else if (propData.type == "num") {
+						def = 0;
+					}
+				}
+				newProp.default = def;
+				// Save the propiety in the array.
+				let count = prop.length;
+				prop[count] = newProp;
+			}
+			tempObj.baseProperties = prop;
+			// Find if there is a obj with the same name.
+			let replaced = false;
+			for (let j = 0; j < this.objects.length; j++) {
+				// If so replace it.
+				if (this.objects[j].name == tempObj.name) {
+					this.objects[j] = tempObj;
+					replaced = true;
+				}
+			}
+			// If not add to end of list.
+			if (!replaced) {
+				this.objects[this.objects.length] = tempObj;
+			}
+		}
+
+		this.objects = this.objects.sort(function (a, b) {
+			return a.zIndex - b.zIndex;
+		});
+	}
+}
+
+interface ObjJsonData {
+	name: string;
+	isShape?: boolean;
+	color?: string;
+	zIndex: number;
+	isArea?: boolean;
+	modeSettings?: boolean;
+	propieties?: ObjJsonPropiety[];
+	image?: string;
+	disableMirroring?: boolean;
+	mirrorObj?: string;
+	size?: [number, number];
+	minSize?: [number, number];
+}
+
+interface ObjJsonPropiety {
+	id: string;
+	type: string;
+	name?: string;
+	mirror?: boolean;
+	options?: any[];
+	mirrorOptions?: any[];
+	default?: any;
+	linkData?: any[];
 }
 
 let global = new Global();

@@ -291,25 +291,34 @@ export class Level {
 
 		// Filter instances
 		clonedLevel.instances = clonedLevel.instances.filter((instance) => {
-			if (instance.mirrorEnabled === MirrorEnabled.NonMirroredOnly) return false;
+			if (instance.mirrorEnabled === MirrorEnabled.NonMirroredOnly) {
+				return false;
+			}
+			// Just allow all to go over bounds if MirrorOnly is true.
+			if (instance.mirrorEnabled === MirrorEnabled.MirroredOnly) {
+				return true;
+			}
 			if (instance.points) {
 				if (_.every(instance.points, p => p.x >= clonedLevel.mirrorX)) return false;
 				return true;
 			}
 			else {
 				if (instance.pos.x > clonedLevel.mirrorX) {
-					// Special case: you want to support CP in a mirrored map. As CP is an asymmetrical mode, control points on the right
+					// Special case: you want to support CP in a mirrored map.
+					// As CP is an asymmetrical mode, control points on the right
 					// side of mirror axis will not be deleted if flagged with MirroredOnly.
-					if (instance.objectName === "Control Point" && instance.mirrorEnabled === MirrorEnabled.MirroredOnly) {
-						return true;
-					}
+					//if (instance.objectName === "Control Point" &&
+					//	instance.mirrorEnabled === MirrorEnabled.MirroredOnly
+					//) {
+					//	return true;
+					//}
 					if (instance.properties?.doNotMirror === true) {
 						return true;
 					}
 					return false;
 				}
-				if (instance.objectName === "Red Spawn") return false;
-				if (instance.objectName === "Red Flag") return false;
+				//if (instance.objectName === "Red Spawn") return false;
+				//if (instance.objectName === "Red Flag") return false;
 				return true;
 			}
 		});
@@ -347,7 +356,10 @@ export class Level {
 					navMeshNode.isRedFlagNode = false;
 				}
 				// Control points should not be mirrored, as by design the mode is asymmetrical
-				if (instance.objectName === "Control Point") {
+				//if (instance.objectName === "Control Point") {
+				//	instancesNotToMirror.add(instance);
+				//}
+				if (instance.obj.disableMirroring) {
 					instancesNotToMirror.add(instance);
 				}
 				if (instance.properties?.raceStartSpawn === true) {
@@ -370,16 +382,6 @@ export class Level {
 				}
 
 				clonedInstance.points = _.reverse(clonedInstance.points);
-
-				// Cloned no scroll: invert the free direction
-				if (clonedInstance.objectName === "No Scroll") {
-					if (clonedInstance.properties?.freeDir === "right") {
-						clonedInstance.properties.freeDir = "left";
-					}
-					else if (clonedInstance.properties?.freeDir === "left") {
-						clonedInstance.properties.freeDir = "right";
-					}
-				}
 			}
 			else {
 				if (instance.pos.x >= clonedLevel.mirrorX) continue;
@@ -413,7 +415,11 @@ export class Level {
 						}
 					}
 				}
-
+				// Generic clone change.
+				if (clonedInstance.obj.mirrorObj) {
+					clonedInstance.objectName = clonedInstance.obj.mirrorObj;
+				}
+				/*
 				// Cloned flag: invert the flag color
 				if (clonedInstance.objectName === "Red Flag") {
 					clonedInstance.objectName = "Blue Flag";
@@ -429,9 +435,10 @@ export class Level {
 				else if (clonedInstance.objectName === "Blue Spawn") {
 					clonedInstance.objectName = "Red Spawn";
 				}
+				*/
 
 				// Cloned map sprite: flip x dir
-				if (clonedInstance.objectName === "Map Sprite" || clonedInstance.objectName === "Ride Armor" || clonedInstance.objectName === "Ride Chaser") {
+				if (clonedInstance.objectName === "Map Sprite") {
 					if (clonedInstance.properties.flipX === undefined) {
 						clonedInstance.properties.flipX = true;
 					}
@@ -461,13 +468,6 @@ export class Level {
 						nodeName = nodeName.replace("Node", "Node Mirrored");
 						clonedInstance.properties.nodeName = nodeName;
 					}
-				}
-
-				if (clonedInstance.properties.forceDir === "left") {
-					clonedInstance.properties.forceDir = "right";
-				}
-				else if (clonedInstance.properties.forceDir === "right") {
-					clonedInstance.properties.forceDir = "left";
 				}
 			}
 
@@ -522,6 +522,16 @@ export class Level {
 						nodeName: nameMatch
 					});
 				}
+			}
+		}
+
+		// Mirror all propieties.
+		for (let instance of clonedLevel.instances) {
+			if (!instance.obj?.baseProperties) {
+				continue;
+			}
+			for (let prop of instance.obj.baseProperties) {
+				instance.properties[prop.name] = prop.mirrorVal(instance);
 			}
 		}
 

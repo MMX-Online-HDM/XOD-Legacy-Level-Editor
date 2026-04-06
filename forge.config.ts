@@ -10,7 +10,7 @@ const config: ForgeConfig = {
 		name: "MMXOD Editor",
 		executableName: "MMXOD_Sprite_Editor",
 		icon: "favicon.ico",
-		extraResource: ["./resources/images/", "./resources/css/"],
+		extraResource: ["./resources/data", "./resources/images/", "./resources/css/"],
 	},
 	rebuildConfig: {},
 	makers: [

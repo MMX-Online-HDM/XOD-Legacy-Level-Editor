@@ -170,7 +170,11 @@ export class Instance {
 
 	draw(ctx: CanvasRenderingContext2D, data: LevelEditorState, viewPort: Rect) {
 		if (this.isShape) {
-			this.drawShapeInstance(ctx);
+			if (this.obj.isArea) {
+				this.drawAreaInstance(ctx);
+			} else {
+				this.drawShapeInstance(ctx);
+			}
 		}
 		else if (this.objectName === "Map Sprite" || this.objectName === "Moving Platform") {
 			this.drawMapSpriteInstance(ctx, viewPort);
@@ -203,6 +207,70 @@ export class Instance {
 				ctx, new Shape(pointsAlt), true, "", this.obj.color, 1, lineAlpha
 			);
 		}
+	}
+
+	drawAreaInstance(ctx: CanvasRenderingContext2D) {
+		if (this.points.length == 0) {
+			return;
+		}
+		let tRect = (new Shape(this.points)).getRect();
+
+		// If too small or points is less than 4.
+		// It should never be less than 4 that would be a bug, but better safe than sorry.
+		if (this.points.length != 4 || !tRect || tRect.h <= 8 || tRect.w <= 8) {
+			this.drawShapeInstance(ctx);
+			return;
+		}
+		var centerAlpha = 0.3;
+		var lineAlpha = 0.6;
+
+		// Inside.
+		let pointsIn = [[
+			this.points[0].clone(),
+			this.points[1].clone(),
+			this.points[1].addxy(-4, 4),
+			this.points[0].addxy(4, 4),
+		], [
+			this.points[1].clone(),
+			this.points[2].clone(),
+			this.points[2].addxy(-4, -4),
+			this.points[1].addxy(-4, 4),
+		], [
+			this.points[2].clone(),
+			this.points[3].clone(),
+			this.points[3].addxy(4, -4),
+			this.points[2].addxy(-4, -4),
+		], [
+			this.points[0].clone(),
+			this.points[3].clone(),
+			this.points[3].addxy(4, -4),
+			this.points[0].addxy(4, 4),
+		]];
+		// Outside line.
+		var pointsAlt = [
+			this.points[0].clone(),
+			this.points[1].addxy(-1, 0),
+			this.points[2].addxy(-1, -1),
+			this.points[3].addxy(0, -1)
+		];
+		// Inside line.
+		var pointsAlt2 = [
+			pointsAlt[0].addxy(4, 4),
+			pointsAlt[1].addxy(-4, 4),
+			pointsAlt[2].addxy(-4, -4),
+			pointsAlt[3].addxy(4, -4)
+		];
+		for (let i = 0; i < pointsIn.length; i++) {
+			DrawWrappers.drawPolygon(
+				ctx, new Shape(pointsIn[i]), true, this.obj.color, "", 0, centerAlpha
+			);
+		}
+		DrawWrappers.drawPolygon(
+			ctx, new Shape(pointsAlt), true, "", this.obj.color, 1, lineAlpha
+		);
+		DrawWrappers.drawPolygon(
+			ctx, new Shape(pointsAlt2), true, "", this.obj.color, 1, lineAlpha
+		);
 	}
 
 	drawMapSpriteInstance(ctx: CanvasRenderingContext2D, viewPort: Rect) {
@@ -264,11 +332,33 @@ export class Instance {
 					let startPos = new Point(this.pos.x + xOff, this.pos.y + yOff);
 					let destPos = new Point(node.pos.x - xOff, node.pos.y - yOff);
 
-					DrawWrappers.drawLine(ctx, startPos.x, startPos.y, destPos.x, destPos.y, "green", 2);
+					let color = "green";
+
+					if (neighbor.dropFromLadder) {
+						color = "olive";
+					}
+					if (neighbor.ladderDir) {
+						color = "slateblue";
+					}
+					if (neighbor.isDestNodeInAir) {
+						color = "mediumaquamarine";
+					}
+
+					DrawWrappers.drawLine(ctx, startPos.x, startPos.y, destPos.x, destPos.y, color, 2);
 					let dist2 = startPos.distanceTo(destPos);
 					let arrowPoints = this.getArrowPoints(dist2, 10, startPos.x, startPos.y, destPos.x, destPos.y, 30);
-					DrawWrappers.drawLine(ctx, arrowPoints[0].x, arrowPoints[0].y, destPos.x, destPos.y, "green", 2);
-					DrawWrappers.drawLine(ctx, arrowPoints[1].x, arrowPoints[1].y, destPos.x, destPos.y, "green", 2);
+					DrawWrappers.drawLine(ctx, arrowPoints[0].x, arrowPoints[0].y, destPos.x, destPos.y, color, 2);
+					DrawWrappers.drawLine(ctx, arrowPoints[1].x, arrowPoints[1].y, destPos.x, destPos.y, color, 2);
+				}
+				if (neighbor.includeJumpZones) {
+					let jump: Instance = _.find(data.selectedLevel.instances, (instance) => {
+						return instance.name === neighbor.includeJumpZones;
+					});
+					let jrect = jump.getRect();
+
+					DrawWrappers.drawRect(
+						ctx, jrect, "red", "", 0, 0.25
+					);
 				}
 			}
 		}
@@ -420,6 +510,9 @@ export class Instance {
 				return Rect.CreateWH(this.pos.x + offset.x, this.pos.y + offset.y, rect.w, rect.h);
 			}
 			else {
+				if (this.obj?.iconSize == null) {
+					throw "Error reading icon size on object " + this.objectName;
+				}
 				let xOff = this.obj.iconSize[0] / 2;
 				let yOff = this.obj.iconSize[1];
 				if (this.obj.center) {
@@ -441,6 +534,43 @@ export class Instance {
 			var maxY = _.maxBy(this.points, (point) => { return point.y; }).y;
 			return Rect.Create(new Point(minX, minY), new Point(maxX, maxY));
 		}
+	}
+
+	getSelectRects() : Rect[] {
+		if (!this.obj.isArea || !this.isShape) {
+			return [this.getRect()];
+		}
+		return [new Rect(
+			this.points[0].x,
+			this.points[0].y,
+			this.points[1].x,
+			this.points[0].y + 4,
+		), new Rect(
+			this.points[1].x - 4,
+			this.points[1].y,
+			this.points[1].x,
+			this.points[2].y,
+		), new Rect(
+			this.points[3].x,
+			this.points[3].y - 4,
+			this.points[2].x,
+			this.points[3].y,
+		), new Rect(
+			this.points[0].x,
+			this.points[0].y,
+			this.points[0].x + 4,
+			this.points[3].y,
+		)];
+	}
+
+	calculateMouseSelect(mouseX: number, mouseY: number) : boolean {
+		let rectList = this.getSelectRects();
+		for (let i = 0; i < rectList.length; i++) {
+			if (rectList[i].inRect(mouseX, mouseY)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	isOutOfBounds(level: Level) {
@@ -481,47 +611,83 @@ export class Instance {
 		}
 	}
 
-	//resizeDir can be: ["nw-resize", "n-resize", "ne-resize", "e-resize", "se-resize", "s-resize", "sw-resize", "w-resize"];
+	//resizeDir can be: [
+	//  "nw-resize", "n-resize", "ne-resize", "e-resize",
+	//  "se-resize", "s-resize", "sw-resize", "w-resize"
+	//];
 	resize(deltaX: number, deltaY: number, resizeDir: string) {
 		if (!this.isShape) return;
+		if (this.points.length <= 0) return;
 
+		let boundX = this.points[0].x;
+		let boundY = this.points[0].y;
+		let isUp = false;
+		let isLeft = false;
+		let useBounds = this.points.length > 1;
+
+		isUp = deltaY < 0;
+		isLeft = deltaX < 0;
+
+		// Parse the string.
+		// Gacel: Man... we should just have used 2 Ints for X and Y instead of a String.
+		let yDir = 0;
+		if (resizeDir.charAt(0) == "n") {
+			yDir = -1;
+			if (isUp) { useBounds = false; }
+		} else if (resizeDir.charAt(0) == "s") {
+			yDir = 1;
+			if (!isUp) { useBounds = false; }
+		}
+		let xDir = 0;
+		if (resizeDir.charAt(0) == "w" || resizeDir.charAt(1) == "w") {
+			xDir = -1;
+			if (isLeft) { useBounds = false; }
+		} else if (resizeDir.charAt(0) == "e" || resizeDir.charAt(1) == "e") {
+			xDir = 1;
+			if (!isLeft) { useBounds = false; }
+		}
+
+		// Get the bounds to avoid shapes with size [0, 0]
+		if (useBounds) {
+			for (let i = 0; i < this.points.length; i++) {
+				var point = this.points[i];
+				if (isLeft && point.x < boundX || !isLeft && point.x > boundX) {
+					boundX = point.x;
+				}
+				if (isUp && point.y < boundY || !isUp && point.y > boundY) {
+					boundY = point.y;
+				}
+			}
+		}
+
+		// Set pos.
 		for (let i = 0; i < this.points.length; i++) {
-
 			var point = this.points[i];
 			var perc_from_ox = 0;
 			var perc_from_oy = 0;
 
-			if (resizeDir === "nw-resize") {
-				perc_from_ox = this.points[i].perc_from_right;
-				perc_from_oy = this.points[i].perc_from_bottom;
+			if (yDir == -1) {
+				perc_from_oy = point.perc_from_bottom;
 			}
-			else if (resizeDir === "n-resize") {
-				perc_from_oy = this.points[i].perc_from_bottom;
+			else if (yDir == 1) {
+				perc_from_oy = point.perc_from_top;
 			}
-			else if (resizeDir === "ne-resize") {
-				perc_from_ox = this.points[i].perc_from_left;
-				perc_from_oy = this.points[i].perc_from_bottom;
+			if (xDir == -1) {
+				perc_from_ox = point.perc_from_right;
 			}
-			else if (resizeDir === "e-resize") {
-				perc_from_ox = this.points[i].perc_from_left;
-			}
-			else if (resizeDir === "se-resize") {
-				perc_from_ox = this.points[i].perc_from_left;
-				perc_from_oy = this.points[i].perc_from_top;
-			}
-			else if (resizeDir === "s-resize") {
-				perc_from_oy = this.points[i].perc_from_top;
-			}
-			else if (resizeDir === "sw-resize") {
-				perc_from_ox = this.points[i].perc_from_right;
-				perc_from_oy = this.points[i].perc_from_top;
-			}
-			else if (resizeDir === "w-resize") {
-				perc_from_ox = this.points[i].perc_from_right;
+			else if (xDir == 1) {
+				perc_from_ox = point.perc_from_left;
 			}
 
-			this.points[i].x += (deltaX * perc_from_ox);
-			this.points[i].y += (deltaY * perc_from_oy);
+			let newX = this.points[i].x + (deltaX * perc_from_ox);
+			let newY = this.points[i].y + (deltaY * perc_from_oy);
+
+			if (!useBounds || isLeft && newX > boundX || !isLeft && newX < boundX) {
+				this.points[i].x = newX;
+			}
+			if (!useBounds || isUp && newY > boundY || !isUp && newY < boundY) {
+				this.points[i].y = newY;
+			}
 		}
 
 	}

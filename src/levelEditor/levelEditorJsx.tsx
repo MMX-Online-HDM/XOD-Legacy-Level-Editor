@@ -192,6 +192,17 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 						<div style={{ width: 6 }} />
 						<div>Zoom Level: <input style={{ width: "35px" }} type="number" value={t.getZoom().toString()} onChange={e => t.setZoom(e.target.valueAsNumber)} /></div>
 						<div style={{ width: 6 }} />
+						<div>Overscroll: <input
+							value={state.overscroll}
+							type="number"
+							style={{ width: "35px" }}
+							onChange={e => {
+								state.overscroll = e.target.valueAsNumber;
+								t.levelCanvas.toggleOverscroll(state.overscroll);
+								t.changeState();
+							}}
+						/></div>
+						<div style={{ width: 6 }} />
 						<div>Clicked Mouse Coords: {Math.round(t.levelCanvas.lastClickX)},{Math.round(t.levelCanvas.lastClickY)}</div>
 					</div>
 					<div id="map-control-menu">
@@ -345,6 +356,8 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 								</div>
 
 								<div className="properties">
+									{state.selectedInstances[0].obj.renderPropCode(t)}
+
 									{
 										state.selectedInstances[0].objectName.startsWith("Map Sprite") &&
 										<>
@@ -391,76 +404,6 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 									}
 
 									{
-										state.selectedInstances[0].objectName.startsWith("Music Source") &&
-										<>
-											<div style={{ display: "inline-block", marginRight: "5px" }}>
-												<PropertyInput propertyName="musicName" value={t.getPropertyValue("musicName") ?? ""} displayName="Music Name" levelEditor={t} />
-											</div>
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName.startsWith("Move Zone") &&
-										<>
-											<div style={{ display: "inline-block", marginRight: "5px" }}>
-												<PropertyInput propertyName="moveX" value={t.getPropertyValue("moveX") ?? 0} displayName="Move X" levelEditor={t} />
-												<PropertyInput propertyName="moveY" value={t.getPropertyValue("moveY") ?? 0} displayName="Move Y" levelEditor={t} />
-											</div>
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName.startsWith("Turn Zone") &&
-										<>
-											<div style={{ display: "inline-block", marginRight: "5px" }}>
-												<PropertyInput propertyName="turnDir" value={t.getPropertyValue("turnDir") ?? "left"} displayName="X Dir" levelEditor={t} options={["left", "right"]} />
-												<PropertyInput propertyName="jumpAfterTurn" value={t.getPropertyValue("jumpAfterTurn") ?? true} displayName="Jump After Turn" levelEditor={t} />
-											</div>
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName.startsWith("Brake Zone") &&
-										<>
-											<div style={{ display: "inline-block", marginRight: "5px" }}>
-											</div>
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === "Control Point" &&
-										<>
-											<PropertyInput propertyName="hill" value={t.getPropertyValue("hill") ?? true} displayName="Hill" levelEditor={t} />
-											<PropertyInput propertyName="num" value={t.getPropertyValue("num") ?? 1} displayName="CP Num" levelEditor={t} options={[1, 2]} />
-											<PropertyInput propertyName="captureTime" value={t.getPropertyValue("captureTime") ?? 30} displayName="Time to Capture" levelEditor={t} />
-											<PropertyInput propertyName="awardTime" value={t.getPropertyValue("awardTime") ?? 120} displayName="Time Awarded" levelEditor={t} />
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === 'No Scroll' &&
-										<>
-											<PropertyInput propertyName="freeDir" value={t.getPropertyValue("freeDir") ?? "left"} displayName="Free Dir" levelEditor={t} options={["left", "right", "up", "down"]} />
-											<PropertyInput propertyName="snap" value={t.getPropertyValue("snap") ?? true} displayName="snap" levelEditor={t} />
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === 'Backwall Zone' &&
-										<>
-											<PropertyInput propertyName="isExclusion" value={t.getPropertyValue("isExclusion") ?? true} displayName="Is Exclusion" levelEditor={t} />
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === 'Jump Zone' &&
-										<>
-											<PropertyInput propertyName="forceDir" value={t.getPropertyValue("forceDir") ?? "left"} displayName="Force Dir" levelEditor={t} options={["left", "right"]} />
-											<PropertyInput propertyName="jumpTime" value={t.getPropertyValue("jumpTime") ?? 0.5} displayName="Jump Time" levelEditor={t} />
-										</>
-									}
-
-									{
 										state.selectedInstances[0].objectName === 'Node' &&
 										<>
 											<PropertyInput propertyName="connectToSelfIfMirrored" value={t.getPropertyValue("connectToSelfIfMirrored") ?? true} displayName="Connect To Self If Mirrored" levelEditor={t} />
@@ -485,58 +428,9 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 											}
 										</>
 									}
-
-									{
-										state.selectedInstances[0].objectName === 'Kill Zone' &&
-										<>
-											<PropertyInput propertyName="killInvuln" value={t.getPropertyValue("killInvuln") ?? true} displayName="Kill Invuln" levelEditor={t} />
-											<PropertyInput propertyName="damage" value={t.getPropertyValue("damage") ?? 4} displayName="Override Damage" levelEditor={t} />
-											<PropertyInput propertyName="flinch" value={t.getPropertyValue("flinch") ?? true} displayName="Flinch?" levelEditor={t} />
-											<PropertyInput propertyName="hitCooldown" value={t.getPropertyValue("hitCooldown") ?? 1} displayName="Hit Cooldown" levelEditor={t} />
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === 'Collision Shape' &&
-										<>
-											<PropertyInput propertyName="boundary" value={t.getPropertyValue("boundary") ?? true} displayName="Boundary" levelEditor={t} />
-											<PropertyInput propertyName="pitWall" value={t.getPropertyValue("pitWall") ?? true} displayName="Pit Wall" levelEditor={t} />
-											<PropertyInput propertyName="unclimbable" value={t.getPropertyValue("unclimbable") ?? true} displayName="Unclimbable" levelEditor={t} />
-											<PropertyInput propertyName="slippery" value={t.getPropertyValue("slippery") ?? true} displayName="Slippery" levelEditor={t} />
-											<PropertyInput propertyName="topWall" value={t.getPropertyValue("topWall") ?? true} displayName="Top Wall" levelEditor={t} />
-											<PropertyInput propertyName="moveX" value={t.getPropertyValue("moveX") ?? 0} displayName="Move X" levelEditor={t} />
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === 'Gate' &&
-										<>
-											<PropertyInput propertyName="unclimbable" value={t.getPropertyValue("unclimbable") ?? true} displayName="Unclimbable" levelEditor={t} />
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === 'Ride Armor' &&
-										<>
-											<PropertyInput propertyName="raType" value={t.getPropertyValue("raType") ?? "n"} displayName="Type" levelEditor={t} options={["n", "k", "h", "f"]} />
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === 'Ride Chaser' &&
-										<>
-											<PropertyInput propertyName="isCheckpoint" value={t.getPropertyValue("isCheckpoint") ?? true} displayName="Checkpoint Chaser?" levelEditor={t} />
-										</>
-									}
-
 									{
 										// Game Mode Exclusion Shared
-										(state.selectedInstances[0].objectName === 'Ride Armor' ||
-											state.selectedInstances[0].objectName === 'Ride Chaser' ||
-											state.selectedInstances[0].objectName === 'Large Health' ||
-											state.selectedInstances[0].objectName === 'Small Health' ||
-											state.selectedInstances[0].objectName === 'Large Ammo' ||
-											state.selectedInstances[0].objectName === 'Small Ammo') &&
+										state.selectedInstances[0].obj.modeSettings &&
 										<>
 											<PropertyInput propertyName="nonDmOnly" value={t.getPropertyValue("nonDmOnly") ?? true} displayName="Exclude in DM" levelEditor={t} />
 											<PropertyInput propertyName="nonCtfOnly" value={t.getPropertyValue("nonCtfOnly") ?? true} displayName="Exclude in CTF" levelEditor={t} />
@@ -545,37 +439,6 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 											<PropertyInput propertyName="dmOnly" value={t.getPropertyValue("dmOnly") ?? true} displayName="Include in DM Only" levelEditor={t} />
 										</>
 									}
-
-									{
-										// xDir Shared
-										(
-											state.selectedInstances[0].objectName === 'Ride Armor' ||
-											state.selectedInstances[0].objectName === 'Ride Chaser' ||
-											state.selectedInstances[0].objectName.includes('Spawn Point')
-										) &&
-										<>
-											<PropertyInput propertyName="flipX" value={t.getPropertyValue("flipX") ?? true} displayName="flipX" levelEditor={t} />
-										</>
-									}
-
-									{
-										(
-											state.selectedInstances[0].objectName.includes('Spawn Point')
-										) &&
-										<>
-											<PropertyInput propertyName="raceStartSpawn" value={t.getPropertyValue("raceStartSpawn") ?? true} displayName="Race Start Spawn?" levelEditor={t} />
-										</>
-									}
-
-									{
-										(
-											state.selectedInstances[0].objectName.includes('Goal')
-										) &&
-										<>
-											<PropertyInput propertyName="mirroredGoal" value={t.getPropertyValue("mirroredGoal") ?? true} displayName="Mirrored Goal?" levelEditor={t} />
-										</>
-									}
-
 								</div>
 
 							</div>

@@ -36,7 +36,6 @@ export class BaseEditor<TState> extends React.Component<{}, {}> {
 	}
 
 	changeState(): void {
-
 		let lastState = this.history[this.undoIndex];
 		if (lastState && _.isEqual(lastState, this.data)) {
 			// console.log("States are equal, not updating");
@@ -55,7 +54,7 @@ export class BaseEditor<TState> extends React.Component<{}, {}> {
 		}
 
 		try {
-			this.redraw();
+			this.redraw(true);
 		} catch (error) {
 			console.error("Redraw failed on state change. Error: ");
 			console.error(error);

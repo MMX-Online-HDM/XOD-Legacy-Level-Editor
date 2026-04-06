@@ -1,0 +1,1 @@
+start MMXOD_Sprite_Editor.exe -- levelEditor

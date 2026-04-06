@@ -860,7 +860,13 @@ export class SpriteEditor extends BaseEditor<SpriteEditorState> {
 			if (this.animTime >= frames[this.animFrameIndex].duration * 1000) {
 				this.animFrameIndex++;
 				if (this.animFrameIndex >= frames.length) {
-					this.animFrameIndex = 0;
+					let loopFrame = 0;
+					if (state.selectedSprite.loopStartFrame > 0 &&
+						state.selectedSprite.loopStartFrame < frames.length
+					) {
+						loopFrame = state.selectedSprite.loopStartFrame;
+					}
+					this.animFrameIndex = loopFrame;
 				}
 				this.animTime = 0;
 			}

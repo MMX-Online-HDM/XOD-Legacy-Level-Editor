@@ -45,8 +45,10 @@ export class LevelEditorState {
 	showForeground: boolean = true;
 	showParallaxes: boolean = true;
 	snapCollision: boolean = false;
+	overscroll: number = 0;
 	snapSize: number = 8;
 	showWallPaths: boolean = false;
+	isChangingLevel: boolean = false;
 
 	get selectedInstances(): Instance[] {
 		let instances: Instance[] = [];
@@ -213,6 +215,12 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 			this.forceUpdate();
 		}
 		this.mountMapMenu();
+
+		let objData = await window.Main.loadExtrenalFile("./resources/data/objects.json");
+		let files = await window.Main.readDirExt("./resources/data/");
+		global.initLinks(files);
+		let jsonObjs = JSON.parse(objData);
+		global.initObjects(jsonObjs);
 	}
 
 	mountMapMenu() {
@@ -616,8 +624,10 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 		this.isLoading = true;
 		let backgroundImg = document.createElement("img");
 		backgroundImg.onload = () => {
-			this.data.selectedLevel.width = backgroundImg.width;
-			this.data.selectedLevel.height = backgroundImg.height;
+			if (!this.data.isChangingLevel && !this.isLoading) {
+				this.data.selectedLevel.width = backgroundImg.width;
+				this.data.selectedLevel.height = backgroundImg.height;
+			}
 			newBackground.imgEl = backgroundImg;
 			this.isLoading = false;
 			this.changeState();
@@ -826,6 +836,7 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 	}
 
 	changeLevel(newLevel: Level) {
+		this.data.isChangingLevel = true;
 		this.levelCanvas.resetFastScroll();
 		this.data.selectedLevelIndex = global.levels.indexOf(newLevel);
 		this.data.selectedObjectIndex = -1;
@@ -841,6 +852,7 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 		for (let instance of newLevel.instances) {
 			instance.properties = instance.properties || {};
 		}
+		this.data.isChangingLevel = false;
 	}
 
 	async saveAllLevels() {
@@ -873,9 +885,11 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 	}
 
 	redraw(redrawBackgrounds: boolean = false) {
-		if (redrawBackgrounds || this.data.toggleShowCamBounds || this.data.didShowCamBounds) {
-			this.levelCanvas.redrawBackgrounds();
-			this.data.didShowCamBounds = this.data.toggleShowCamBounds;
+		if (this.data.selectedLevel) {
+			if (redrawBackgrounds || this.data.toggleShowCamBounds || this.data.didShowCamBounds) {
+				this.levelCanvas.redrawBackgrounds();
+				this.data.didShowCamBounds = this.data.toggleShowCamBounds;
+			}
 		}
 		this.levelCanvas.redraw();
 	}

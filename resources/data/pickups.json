@@ -1,0 +1,19 @@
+[
+	{
+		"name": "Ammo Small", "id": "ammoSmall",
+		"groups": ["ammo"], "size": "small",
+		"image": "resources/images/smallAmmo.png"
+	}, {
+		"name": "Ammo Large", "id": "ammoLarge",
+		"groups": ["ammo"], "size": "large",
+		"image": "resources/images/largeAmmo.png"
+	}, {
+		"name": "Health Small", "id": "healthSmall",
+		"groups": ["hp"], "size": "small",
+		"image": "resources/images/healthSmall.png"
+	}, {
+		"name": "Health Large", "id": "healthLarge",
+		"groups": ["hp"], "size": "large",
+		"image": "resources/images/healthLarge.png"
+	}
+]

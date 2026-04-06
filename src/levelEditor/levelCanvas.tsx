@@ -65,7 +65,12 @@ export class LevelCanvas extends CanvasUI {
 	}
 
 	getViewPort() {
-		return Rect.CreateWH(this.getScrollLeft() / this.zoom, this.getScrollTop() / this.zoom, this.levelEditor.canvasWidth / this.zoom, this.levelEditor.canvasHeight / this.zoom);
+		return Rect.CreateWH(
+			this.getScrollLeft() / this.zoom - (this.offsetWidth * this.zoom) - 64,
+			this.getScrollTop() / this.zoom - (this.offsetWidth * this.zoom) - 64,
+			this.levelEditor.canvasWidth / this.zoom + 64,
+			this.levelEditor.canvasHeight / this.zoom + 64
+		);
 	}
 
 	fastScrollHelper(xDist: number, yDist: number) {
@@ -93,16 +98,19 @@ export class LevelCanvas extends CanvasUI {
 	}
 
 	redraw() {
-		let le = this.levelEditor;
 		let data = this.levelEditor.data;
+		if (!data.selectedLevel) return;
+
+		let le = this.levelEditor;
 		let sl = data.selectedLevel;
 		let canvas = this.canvas;
 		let ctx = this.ctx;
-		if (!data.selectedLevel) return;
+		let extraSizeX = this.offsetWidth + this.extraWidth;
+		let extraSizeY = this.offsetHeight + this.extraHeight;
 
 		if (sl) {
-			this.baseWidth = sl.width;
-			this.baseHeight = sl.height;
+			this.baseWidth = sl.width + extraSizeX;
+			this.baseHeight = sl.height + extraSizeY;
 			if (!this.isNoScrollZoom) {
 				canvas.width = this.baseWidth * this.zoom;
 				canvas.height = this.baseHeight * this.zoom;
@@ -112,12 +120,17 @@ export class LevelCanvas extends CanvasUI {
 		ctx.save();
 		ctx.imageSmoothingEnabled = false;
 
-		let viewRect = Rect.CreateWH(0, 0, canvas.width, canvas.height);
+		let bgRect = Rect.CreateWH(0, 0, canvas.width, canvas.height);
+		let viewRect = Rect.CreateWH(
+			this.offsetWidth * this.zoom, this.offsetHeight * this.zoom,
+			sl.width * this.zoom, sl.height * this.zoom
+		);
 		ctx.clearRect(viewRect.topLeftPoint.x, viewRect.topLeftPoint.y, viewRect.w, viewRect.h);
+		DrawWrappers.drawRect(ctx, bgRect, "black", "", null);
 		DrawWrappers.drawRect(ctx, viewRect, "white", "", null);
 
 		ctx.scale(this.zoom, this.zoom);
-		ctx.translate(-this.fastScrollX, -this.fastScrollY);
+		ctx.translate(-this.fastScrollX + this.offsetWidth, -this.fastScrollY + this.offsetHeight);
 
 		let viewPort = this.getViewPort();
 		ctx.drawImage(
@@ -189,8 +202,49 @@ export class LevelCanvas extends CanvasUI {
 				}
 			}
 		}
+		ctx.restore();
+
+		if (this.offsetWidth > 0 || this.offsetHeight > 0 ||
+			this.extraWidth > 0 || this.extraHeight > 0
+		) {
+			let left = this.offsetWidth * this.zoom;
+			let top = this.offsetHeight * this.zoom;
+			let rigth = left + (sl.width * this.zoom);
+			let down = top + (sl.height * this.zoom);
+
+			DrawWrappers.drawRect(
+				ctx, new Rect(0, 0, left, canvas.height),
+				"black", "", null, 0.5
+			);
+			DrawWrappers.drawRect(
+				ctx, new Rect(left, 0, rigth, top),
+				"black", "", null, 0.5
+			);
+			DrawWrappers.drawRect(
+				ctx, new Rect(rigth, 0, canvas.width, canvas.height),
+				"black", "", null, 0.5
+			);
+			DrawWrappers.drawRect(
+				ctx, new Rect(left, down, rigth, canvas.height),
+				"black", "", null, 0.5
+			);
+		}
 
 		ctx.restore();
+	}
+
+	toggleOverscroll(val: number) {
+		if (val > 0) {	
+			this.offsetWidth = val;
+			this.offsetHeight = val;
+			this.extraWidth = val;
+			this.extraHeight = val;
+		} else {
+			this.offsetWidth = 0;
+			this.offsetHeight = 0;
+			this.extraWidth = 0;
+			this.extraHeight = 0;
+		}
 	}
 
 	redrawBackgrounds() {
@@ -260,8 +314,12 @@ export class LevelCanvas extends CanvasUI {
 				}
 
 				if (selectedParallaxSpritesheet?.imgEl && data.showParallaxes) {
-					DrawWrappers.drawImage(ctx, selectedParallaxSpritesheet.imgEl, 0, 0, selectedParallax.mirrorX, selectedParallaxSpritesheet.imgEl.height, pX, pY);
-					DrawWrappers.drawImage(ctx, selectedParallaxSpritesheet.imgEl, 0, 0, selectedParallax.mirrorX, selectedParallaxSpritesheet.imgEl.height, selectedParallax.mirrorX + pX, pY, -1);
+					if (selectedParallax.mirrorX != null && selectedParallax.mirrorX != 0) {
+						DrawWrappers.drawImage(ctx, selectedParallaxSpritesheet.imgEl, 0, 0, selectedParallax.mirrorX, selectedParallaxSpritesheet.imgEl.height, pX, pY);
+						DrawWrappers.drawImage(ctx, selectedParallaxSpritesheet.imgEl, 0, 0, selectedParallax.mirrorX, selectedParallaxSpritesheet.imgEl.height, selectedParallax.mirrorX + pX, pY, -1);
+					} else {
+						DrawWrappers.drawImage(ctx, selectedParallaxSpritesheet.imgEl, 0, 0, selectedParallaxSpritesheet.imgEl.width, selectedParallaxSpritesheet.imgEl.height, pX, pY);
+					}
 				}
 			}
 

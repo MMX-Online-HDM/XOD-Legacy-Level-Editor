@@ -134,6 +134,17 @@ export const api = {
 		return await send("mountMapMenu", flags);
 	},
 
+	loadExtrenalFile: async(fileName: string) => {
+		let json: string = await send("loadExtrenalFile", fileName);
+		return json;
+	},
+
+	readDirExt: async(folderPath: string) => {
+		let files: string[] = await send("readDirExt", folderPath);
+		return files;
+	},
+
+
 	/** Provide an easier way to listen to events */
 	on: (channel: string, callback: Function) => {
 		ipcRenderer.on(channel, (_, data) => callback(data))

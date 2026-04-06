@@ -60,6 +60,11 @@ export class Tool {
 			if (!instance.isShape && instance.getRect().inRect(this.mouseX, this.mouseY)) {
 				hits.push(instance);
 			}
+			else if (instance.obj.isArea) {
+				if (instance.calculateMouseSelect(this.mouseX, this.mouseY)) {
+					hits.push(instance);
+				}
+			}
 			else if (instance.isShape && Shape.inShape(this.mouseX, this.mouseY, instance.points)) {
 				hits.push(instance);
 			}
@@ -309,8 +314,11 @@ export class DragSelectTool extends Tool {
 		let rect = new Rect(lc.dragLeftX, lc.dragTopY, lc.dragRightX, lc.dragBotY);
 		let selectionIds = [];
 		for (let instance of this.levelEditor.data.selectedLevel.instances) {
-			if (!instance.hidden && rect.overlaps(instance.getRect())) {
-				selectionIds.push(instance.id);
+			let rectList = instance.getSelectRects();
+			for (let i = 0; i < rectList.length; i++) {
+				if (!instance.hidden && rect.overlaps(rectList[i])) {
+					selectionIds.push(instance.id);
+				}
 			}
 		}
 		this.levelEditor.data.selectedInstanceIds = selectionIds;
@@ -709,7 +717,9 @@ export class SelectTool extends Tool {
 			this.levelEditor.changeState();
 			this.levelEditor.switchTool(new MoveTool(this.levelEditor));
 		}
-		else if (data.selectedInstances.length > 0 && data.selectedInstances[0].getRect().inRect(this.mouseX, this.mouseY)) {
+		else if (data.selectedInstances.length > 0 &&
+			data.selectedInstances[0].calculateMouseSelect(this.mouseX, this.mouseY)
+		) {
 			this.levelEditor.switchTool(new MoveTool(this.levelEditor));
 		}
 		else {

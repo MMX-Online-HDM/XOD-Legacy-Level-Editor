@@ -30,7 +30,7 @@ let isMapSpritePath = false;
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
-function createWindow() {
+export function createWindow() {
 	// Create the browser window.
 	mainWindow = new BrowserWindow({
 		icon: path.join(basePath, "favicon.png"),
@@ -74,7 +74,7 @@ function createWindow() {
 	//mainWindow.webContents.openDevTools();
 }
 
-function saveSpriteHelper(req: any) {
+export function saveSpriteHelper(req: any) {
 	let name = req.name;
 	delete req["name"];
 	let jsonStr = JSON.stringify(req);
@@ -83,7 +83,7 @@ function saveSpriteHelper(req: any) {
 	fs.writeFileSync(savePath, jsonStr);
 }
 
-function mapName(filepath: string) {
+export function mapName(filepath: string) {
 	if (!filepath) return filepath;
 	let pieces = filepath.split("/");
 	if (filepath.endsWith("mirrored.json")) {
@@ -92,7 +92,7 @@ function mapName(filepath: string) {
 	return pieces[pieces.length - 2];
 }
 
-function onConfigModFolderChange(config: any) {
+export function onConfigModFolderChange(config: any) {
 	if (config.isInMapModFolder) {
 		levelFolderName = "maps_custom";
 	}
@@ -108,15 +108,15 @@ function onConfigModFolderChange(config: any) {
 	}
 }
 
-function getSpritePath() {
+export function getSpritePath() {
 	return assetPath + `/${spriteFolderName}/`;
 }
 
-function getSpritesheetPath() {
+export function getSpritesheetPath() {
 	return assetPath + `/${spritesheetFolderName}/`;
 }
 
-function walkSync(dir: string, filelist: string[]) {
+export function walkSync(dir: string, filelist: string[]) {
 	let files = fs.readdirSync(dir);
 	filelist = filelist || [];
 	files.forEach(function (file) {
@@ -130,7 +130,7 @@ function walkSync(dir: string, filelist: string[]) {
 	return filelist;
 };
 
-function getSpriteHelper(dirname: string, filename: string) {
+export function getSpriteHelper(dirname: string, filename: string) {
 	if (!filename.endsWith(".json")) return undefined;
 	let content = fs.readFileSync(dirname + filename, "utf-8");
 	let sprite = jsonParseHelper(content);
@@ -143,7 +143,7 @@ function getSpriteHelper(dirname: string, filename: string) {
 	return sprite;
 }
 
-function getSpritesHelper(dirname: string) {
+export function getSpritesHelper(dirname: string) {
 	let sprites: any[] = [];
 	let fileNames = fs.readdirSync(dirname);
 	for (let filename of fileNames) {
@@ -155,7 +155,7 @@ function getSpritesHelper(dirname: string) {
 	return sprites;
 }
 
-function getSpritesheetsHelper(dirname: string) {
+export function getSpritesheetsHelper(dirname: string) {
 	let paths: string[] = [];
 	let fileNames = fs.readdirSync(dirname);
 	for (let filename of fileNames) {
@@ -166,13 +166,13 @@ function getSpritesheetsHelper(dirname: string) {
 	return paths;
 }
 
-function jsonParseHelper(jsonStr: string) {
+export function jsonParseHelper(jsonStr: string) {
 	jsonStr = stripJsonTrailingCommas(jsonStr);
 	const data = JSON.parse(jsonStr);
 	return data;
 }
 
-let api = {
+export let api = {
 	sendHasDirty: (isDirty: boolean) => {
 		if (!mainWindow) return;
 		if (isDirty) {
@@ -463,6 +463,16 @@ let api = {
 		return message;
 	},
 
+	loadExtrenalFile: (filePath: string) => {
+		let file = fs.readFileSync(filePath, "utf8");
+		return file;
+	},
+
+	readDirExt: (folderPath: string) => {
+		let file = fs.readdirSync(folderPath);
+		return file;
+	},
+
 	mountSpriteMenu(flags: boolean[]) {
 		let template: MenuItemConstructorOptions[] = [{
 			label: "&File",
@@ -599,7 +609,7 @@ let api = {
 	}
 }
 
-function openNewFolder() : boolean {
+export function openNewFolder() : boolean {
 	var config = api.getConfig();
 	var paths = dialog.showOpenDialogSync({
 		title: "Please select an assets folder.",
@@ -660,7 +670,7 @@ app.on('activate', () => {
 	}
 })
 
-function updateSpriteMenuAlt(menu: Menu, flags: boolean[]): Menu {
+export function updateSpriteMenuAlt(menu: Menu, flags: boolean[]): Menu {
 	let vmod = menu.getMenuItemById("vmod");
 	if (flags[0]) {
 		vmod.label = "☑️ Visualmods";

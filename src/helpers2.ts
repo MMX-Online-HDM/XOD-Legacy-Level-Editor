@@ -6,7 +6,7 @@ import { LevelEditor } from "./levelEditor/levelEditor";
 
 export function relativeToAbsolutePath(fileName: string, le: LevelEditor) {
 	// If is empty we return it as is.
-	if (fileName == "") {
+	if (!fileName) {
 		return fileName;
 	}
 	// If is absolute we slash it.

@@ -11,7 +11,7 @@ export enum PropertyInputType {
 	MultiLineString,
 }
 
-interface PropertyInputProps {
+export interface PropertyInputProps {
 	propertyName: string;
 	displayName: string;
 	levelEditor: LevelEditor;
@@ -21,10 +21,10 @@ interface PropertyInputProps {
 	singleLine?: boolean;
 	multiLineString?: boolean;
 	onChangeCallback?: (newValue: any) => void;
+	typeName?: string;
 }
 
 export class PropertyInput extends React.Component<PropertyInputProps, {}> {
-
 	propertyInputType: PropertyInputType;
 
 	constructor(props: PropertyInputProps) {
@@ -38,6 +38,25 @@ export class PropertyInput extends React.Component<PropertyInputProps, {}> {
 		}
 		else if (typeof props.value === "string") {
 			this.propertyInputType = props.multiLineString ? PropertyInputType.MultiLineString : PropertyInputType.String;
+		}
+		if (props.typeName) {
+			if (props.typeName == "bool") {
+				this.propertyInputType = PropertyInputType.Boolean;
+			}
+			else if (
+				props.typeName == "mstr" ||
+				props.typeName == "str" ||
+				props.typeName == "link"
+			) {
+				this.propertyInputType = (
+					props.multiLineString ?
+					PropertyInputType.MultiLineString :
+					PropertyInputType.String
+				);
+			}
+			else if (props.typeName == "num") {
+				this.propertyInputType = PropertyInputType.Number;
+			}
 		}
 	}
 

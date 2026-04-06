@@ -154,7 +154,7 @@ export class SpriteEditorInput extends GlobalInput {
 
 	disableGhost() {
 		let state = this.spriteEditor.data;
-		if (state.selectionId === -1) {
+		if (state.selectionId === -1 && state.ghost === undefined) {
 			return;
 		}
 		state.selectionId = -1;

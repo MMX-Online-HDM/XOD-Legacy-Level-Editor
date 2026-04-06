@@ -3,11 +3,14 @@ import * as Helpers from "./helpers";
 import * as DrawWrappers from "./drawWrappers";
 
 export class CanvasUI {
-
 	canvas: HTMLCanvasElement;
 	ctx: CanvasRenderingContext2D;
 	wrapper: HTMLElement;
 	ctrlHeld: boolean = false;
+	offsetWidth: number = 0;
+	offsetHeight: number = 0;
+	extraWidth: number = 0;
+	extraHeight: number = 0;
 	baseWidth: number = 0;
 	baseHeight: number = 0;
 	zoom: number = 1;
@@ -105,8 +108,8 @@ export class CanvasUI {
 			let oldMouseY = this.mouseFY;
 
 			let rect = this.canvas.getBoundingClientRect();
-			this.rawMouseX = event.clientX - rect.left;
-			this.rawMouseY = event.clientY - rect.top;
+			this.rawMouseX = event.clientX - rect.left - (this.offsetWidth * this.zoom);
+			this.rawMouseY = event.clientY - rect.top - (this.offsetHeight * this.zoom);
 
 			this.mouseFX = this.rawMouseX / this.zoom;
 			this.mouseFY = this.rawMouseY / this.zoom;
