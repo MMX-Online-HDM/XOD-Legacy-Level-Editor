@@ -1,5 +1,4 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
-import { MakerZIP } from '@electron-forge/maker-zip';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 
 import { mainConfig } from './webpack/webpack.main.config';
@@ -10,12 +9,9 @@ const config: ForgeConfig = {
 		name: "MMXOD Editor",
 		executableName: "MMXOD_Sprite_Editor",
 		icon: "favicon.ico",
-		extraResource: ["./resources/data", "./resources/images/", "./resources/css/"],
+		extraResource: ["./resources/data", "./resources/images/", "./resources/css/"]
 	},
 	rebuildConfig: {},
-	makers: [
-		new MakerZIP({}, ['darwin']),
-	],
 	plugins: [
 		new WebpackPlugin({
 			mainConfig,
