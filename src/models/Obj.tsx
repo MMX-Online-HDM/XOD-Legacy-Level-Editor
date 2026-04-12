@@ -69,8 +69,9 @@ export class PropertyData {
 	name: string;
 	type: string;
 	displayName: string;
-	default?: any;
+	default?: any = null;
 	mirror: boolean;
+	alwaysMirror: boolean;
 	options?: any[];
 	mirrorOptions?: any[];
 	linkData?: any[];
@@ -102,18 +103,31 @@ export class PropertyData {
 
 	// Get the mirrored variant of the value if allowed.
 	mirrorVal(instance: Instance) {
+		// Get value.
 		let val = instance.properties[this.name];
 		// If we do not allow mirror we return the val.
-		if (!this.mirror) {
+		if (!this.mirror && !this.alwaysMirror) {
 			return val;
+		}
+		// If this is undefined we return undefined. Unless alwaysMirror is enabled.
+		if (val == undefined) {
+			if (this.alwaysMirror) {
+				if (this.type == "bool") {
+					val = !this.default;
+				} else {
+					val = this.default;
+				}
+			} else {
+				return val;
+			}
+		}
+		// If is a bool we negate it.
+		if (this.type == "bool") {
+			return !val;
 		}
 		// If is a num we just negate it.
 		if (this.type == "num") {
 			return -val;
-		}
-		// If is a bool we also negate it.
-		if (this.type == "bool") {
-			return !val;
 		}
 		// If is muti-options we flip them.
 		if (this.type == "msrt" && this.options?.length > 0 && this.mirrorOptions?.length > 0) {

@@ -369,7 +369,7 @@ export class Level {
 		}
 
 		// Generate cloned mirror instances
-		let clonedInstances = [];
+		let clonedInstances: Instance[] = [];
 		for (let instance of clonedLevel.instances) {
 			if (instancesNotToMirror.has(instance)) continue;
 
@@ -526,12 +526,17 @@ export class Level {
 		}
 
 		// Mirror all propieties.
-		for (let instance of clonedLevel.instances) {
+		for (let instance of clonedInstances) {
+			// Skip built in stuff without propieties.
 			if (!instance.obj?.baseProperties) {
 				continue;
 			}
+			// Iterate all propieties.
 			for (let prop of instance.obj.baseProperties) {
-				instance.properties[prop.name] = prop.mirrorVal(instance);
+				// Check to avoid propagating null.
+				if (instance.properties[prop.name] != undefined || prop.alwaysMirror) {
+					instance.properties[prop.name] = prop.mirrorVal(instance);
+				}
 			}
 		}
 

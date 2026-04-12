@@ -301,12 +301,13 @@ export class LevelEditor extends BaseEditor<LevelEditorState> {
 	}
 
 	getMapSpriteOptions() {
-		let mapSpriteOptions;
+		let mapSpriteOptions: string[];
 		if (this.config.isInMapModFolder) {
-			mapSpriteOptions = global.sprites.filter(s => s.name.startsWith(this.data.selectedLevel.name + ":")).map(s => s.name);
+			mapSpriteOptions = global.sprites.filter(s => s.name.startsWith(this.data.selectedLevel.getNonMirroredName() + ":")).map(s => s.name);
 		}
 		else {
-			mapSpriteOptions = global.sprites.filter(s => s.name.startsWith("ms_")).map(s => s.name);
+			mapSpriteOptions = global.sprites.filter(s => s.name.startsWith(this.data.selectedLevel.getNonMirroredName() + ":")).map(s => s.name);
+			mapSpriteOptions.push(...global.sprites.filter(s => s.name.startsWith("ms_")).map(s => s.name));
 		}
 		mapSpriteOptions.unshift("");
 		return mapSpriteOptions;

@@ -349,10 +349,26 @@ export let api = {
 		}
 	},
 
+	setupMapEditorFromSpr: (message: any) => {
+		if (!mainWindow) return;
+		let selectedButtonIndex = 0;
+		if (message.isDirty) {
+			selectedButtonIndex = dialog.showMessageBoxSync(mainWindow, {
+				buttons: ["OK", "Cancel"],
+				message: "You will lose any unsaved changes.",
+				title: "Are you sure?",
+			});
+		}
+		if (selectedButtonIndex === 0) {
+			isLevelEditor = true;
+			mainWindow.reload();
+		}
+	},
+
 	getSprites: () => {
 		let sprites = []; 
 		// If not in the custom map load base sprites.
-		if (!isLevelEditor ||levelFolderName !== "maps_custom") {
+		if (!isLevelEditor || levelFolderName !== "maps_custom") {
 			sprites = getSpritesHelper(getSpritePath());
 		}
 		// Get map-specific sprites.
@@ -376,11 +392,14 @@ export let api = {
 	},
 
 	getSpritesheets: () => {
-		let spritesheets = getSpritesheetsHelper(getSpritesheetPath());
-
+		// Load default sprites only for built-in maps or the sprite editor.
+		let spritesheets = [];
+		if (!isLevelEditor || levelFolderName !== "maps_custom") {
+			spritesheets = getSpritesheetsHelper(getSpritesheetPath());
+		}
 		// Get custom map spritesheets
-		if (isLevelEditor && levelFolderName === "maps_custom") {
-			spritesheets = [];
+		if (isLevelEditor) {
+			// Search sub-sprites.
 			let dirname = assetPath + `/${levelFolderName}/`;
 			let filePaths: string[] = walkSync(dirname, []);
 			for (let filepath of filePaths) {

@@ -260,7 +260,7 @@ export class SpriteEditor extends BaseEditor<SpriteEditorState> {
 			this.onSwapFolderClick();
 		});
 		window.Main.on("spriteToMapBT", () => {
-			this.onSwapFolderClick();
+			this.setupMapEditor();
 		});
 		window.Main.on("reloadBT", () => { this.reload(); });
 		window.Main.on("saveAllBT", () => { if (this.isAnySpriteDirty()) { this.saveSprites(); } });
@@ -284,7 +284,7 @@ export class SpriteEditor extends BaseEditor<SpriteEditorState> {
 		if (this.config != null) {
 			visualMods = this.config.isInSpriteModFolder;
 		}
-		return [visualMods];
+		return [visualMods, this.isMapSpriteEditor];
 	}
 
 	render(): JSX.Element {
@@ -445,6 +445,18 @@ export class SpriteEditor extends BaseEditor<SpriteEditorState> {
 			this.saveConfigAndReload();
 		}
 	}
+
+	async setupMapEditor() {
+		try {
+			await window.Main.setupMapEditorFromSpr(
+				{ isDirty: this.isAnySpriteDirty() }
+			);
+		}
+		catch (error) {
+			window.Main.showError("Error", error.toString());
+		}
+	}
+
 	getSwapFolderButtonText() {
 		if (!this.config) return "Loading...";
 		if (this.config.isInSpriteModFolder) {

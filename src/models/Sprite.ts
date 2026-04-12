@@ -73,7 +73,11 @@ export class Sprite {
 		let frame = this.frames[frameIndex];
 		let rect = frame.rect;
 		let offset = this.getAlignOffset(frame, flipX, flipY);
-		let imgEl = this.getSpritesheet().imgEl;
+		let st = this.getSpritesheet();
+		if (!st) {
+			throw "Missing spritesheet for sprite " + this.name;
+		}
+		let imgEl = st.imgEl;
 		if (imgEl) {
 			DrawWrappers.drawImage(ctx, imgEl, rect.x1, rect.y1, rect.w, rect.h, x + offset.x + frame.offset.x, y + offset.y + frame.offset.y, flipX, flipY, options, alpha, scaleX, scaleY);
 		}

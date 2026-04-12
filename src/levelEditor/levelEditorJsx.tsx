@@ -375,10 +375,14 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 												<PropertyInput singleLine={true} propertyName="doNotMirror" value={t.getPropertyValue("doNotMirror") ?? true} displayName="DoNotMirror" levelEditor={t} />
 											</div>
 											<div style={{ display: "inline-block", verticalAlign: "top" }}>
-												<PropertyInput propertyName="destructableFlag" value={t.getPropertyValue("destructableFlag") ?? 1} displayName="Destructable Flag" levelEditor={t} options={[1, 2, 3]} />
+												<PropertyInput propertyName="destructableFlag" value={t.getPropertyValue("destructableFlag") ?? 1} displayName="Destructable Flag" levelEditor={t} options={[1, 2, 3, 4]} />
 												<PropertyInput propertyName="destructableHealth" value={t.getPropertyValue("destructableHealth") ?? 12} displayName="Destructable Health" levelEditor={t} />
 												<PropertyInput propertyName="destroyInstanceName" value={t.getPropertyValue("destroyInstanceName") ?? ""} displayName="Destroy Instance" levelEditor={t} />
 												<PropertyInput propertyName="gibSpriteName" value={t.getPropertyValue("gibSpriteName") ?? ""} displayName="Gib Sprite" levelEditor={t} options={t.getMapSpriteOptions()} />
+												<PropertyInput propertyName="destructableFlag" value={t.getPropertyValue("destructableFlag") ?? 1} displayName="Destructable Flag" levelEditor={t} options={[1, 2, 3]} />
+												<PropertyInput propertyName="respawnTime" value={t.getPropertyValue("respawnTime") ?? 0} displayName="Respawn Time" levelEditor={t} />
+												<PropertyInput propertyName="isGlass" value={t.getPropertyValue("isGlass") ?? true} displayName="Is Glass" levelEditor={t}/>
+												
 											</div>
 										</>
 									}

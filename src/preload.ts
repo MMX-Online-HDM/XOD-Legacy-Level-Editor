@@ -122,6 +122,10 @@ export const api = {
 		return await send("setupMapSpriteEditor", json);
 	},
 
+	setupMapEditorFromSpr: async (json: any) => {
+		return await send("setupMapEditorFromSpr", json);
+	},
+
 	mountSpriteMenu: async(flags: boolean[]) => {
 		return await send("mountSpriteMenu", flags);
 	},

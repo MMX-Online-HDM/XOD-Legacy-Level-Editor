@@ -93,7 +93,8 @@
 			"type": "mstr", "name": "Force Dir", "mirror": true,
 			"options": ["left", "right"], "mirrorOptions": ["right", "left"]
 		},
-		{ "id": "jumpTime", "type": "num", "name": "Jump Time", "default": 0.5 }
+		{ "id": "jumpTime", "type": "num", "name": "Jump Time", "default": 0.5 },
+		{ "id": "targetNode", "type": "str", "name": "Target Node" }
 	]
 }, {
 	"name": "Move Zone",
@@ -132,7 +133,7 @@
 	"image": "resources/images/spawnPoint.png",
 	"zIndex": 50,
 	"propieties": [
-		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true },
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true },
 		{ "id": "raceStartSpawn", "type": "bool", "name": "Race Spawn" },
 		{ "id": "teamNum", "type": "num", "default": -1 }
 	]
@@ -142,7 +143,7 @@
 	"zIndex": 51,
 	"mirrorObj": "Red Spawn",
 	"propieties": [
-		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true }
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true }
 	]
 }, {
 	"name": "Red Spawn",
@@ -150,7 +151,7 @@
 	"zIndex": 52,
 	"mirrorObj": "Blue Spawn",
 	"propieties": [
-		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true }
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true }
 	]
 }, {
 	"name": "Blue Flag",
@@ -203,7 +204,7 @@
 	"propieties": [
 		{ "id": "raType", "type": "mstr", "name": "Type", "options": ["N", "K", "H", "F", "B", "G", "D"] },
 		{ "id": "isPlat", "type": "bool", "name": "Penta Mode" },
-		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true }
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true }
 	]
 }, {
 	"name": "Ride Chaser",
@@ -212,7 +213,7 @@
 	"modeSettings": true,
 	"propieties": [
 		{ "id": "isCheckpoint", "type": "bool", "name": "Checkpoint Chaser" },
-		{ "id": "flipX", "type": "bool", "name": "Flip X", "mirror": true }
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true }
 	]
 }, {
 	"name": "Music Source",

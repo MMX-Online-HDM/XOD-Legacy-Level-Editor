@@ -95,6 +95,7 @@ class Global {
 				newProp.displayName = propData.name ?? propData.id;
 				newProp.type = propData.type;
 				newProp.mirror = propData.mirror ?? false;
+				newProp.alwaysMirror = propData.alwaysMirror ?? false;
 				newProp.options = propData.options ?? null;
 				newProp.mirrorOptions = propData.mirrorOptions ?? null;
 				newProp.linkData = propData.linkData ?? null;
@@ -166,6 +167,7 @@ interface ObjJsonPropiety {
 	type: string;
 	name?: string;
 	mirror?: boolean;
+	alwaysMirror?: boolean;
 	options?: any[];
 	mirrorOptions?: any[];
 	default?: any;
