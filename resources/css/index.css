@@ -191,14 +191,56 @@
 	height: 100%;
 }
 
-#map-control-menu {
+#map-control-tabs {
 	margin-top: 2px;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    width: max-content;
+}
+
+.maptab-button {
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	transition: 0.3s;
+}
+.maptab-button:hover  {
+	background-color: #00599D;
+}
+.maptab-button.active {
+	background-color: #0079D5;
+}
+
+#map-control-menu {
 	padding: 2px;
+	height: 100%;
 	overflow: auto;
 	border: 1px solid black;
 }
 
 #map-properties {
+	padding: 2px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#map-properties-element {
+    padding-inline: 2px;
+}
+
+#nav li {
+    display: inline-block;
+}
+
+#nav li + li:before {
+    content: " | ";
+    padding: 0 10px;
+}
+
+#map-parallaxtab {
 	padding: 2px;
 }
 

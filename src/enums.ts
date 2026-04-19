@@ -1,5 +1,7 @@
 export enum MirrorEnabled {
 	Both,
 	NonMirroredOnly,
-	MirroredOnly
+	MirroredOnly,
+	KeepNonMirror,
+	KeepMirror,
 };

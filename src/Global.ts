@@ -15,11 +15,7 @@ class Global {
 	// Most objects are external.
 	objects: Obj[] = [
 		new Obj("Collision Shape", true, "blue", "", 2),
-
 		new Obj("Node", false, "", "resources/images/graph_node.png", 90, true),
-
-		new Obj("Map Sprite", false, "", "resources/images/mapSpritePlaceholder.png", 100),
-		new Obj("Moving Platform", false, "", "resources/images/mapSpritePlaceholder.png", 101),
 
 		new Obj("Jape Memorial", false, "", "resources/images/japeMemorial.png", 110),
 	];
@@ -79,6 +75,8 @@ class Global {
 			tempObj.modeSettings = objs[i].modeSettings ?? false;
 			tempObj.disableMirroring = objs[i].disableMirroring ?? false;
 			tempObj.mirrorObj = objs[i].mirrorObj ?? "";
+			tempObj.drawSprite = objs[i].drawSprite ?? "";
+			tempObj.spriteRect = objs[i].spriteRect ?? ""; 
 
 			// Parse propieties.
 			let prop = tempObj.baseProperties;
@@ -98,11 +96,18 @@ class Global {
 				newProp.alwaysMirror = propData.alwaysMirror ?? false;
 				newProp.options = propData.options ?? null;
 				newProp.mirrorOptions = propData.mirrorOptions ?? null;
-				newProp.linkData = propData.linkData ?? null;
+				newProp.linkJson = propData.linkJson ?? null;
+				newProp.jsOptions = propData.jsOptions ?? null;
+				newProp.required = propData.required ?? false;
+				newProp.cvArraySize = propData.cvArraySize ?? 0;
+				if (CSS.supports("color", propData.cvCoordColor)) {
+					newProp.cvCoordColor = propData.cvCoordColor ?? "";
+				}
+
 				let def : any = propData.default ?? null;
 				if (def == null) {
-					if (propData.type == "link" && propData.linkData?.length > 0) {
-						def = propData.linkData[0].id;
+					if (propData.type == "link" && propData.linkJson?.length > 0) {
+						def = propData.linkJson[0].id;
 					} else if (propData.options?.length > 0) {
 						def = propData.options[0];
 					}
@@ -111,12 +116,16 @@ class Global {
 					}
 					else if (
 						propData.type == "mstr" ||
+						propData.type == "lstr" ||
 						propData.type == "str" ||
 						propData.type == "link"
 					) {
 						def = "";
 					}
-					else if (propData.type == "num") {
+					else if (
+						propData.type == "num" ||
+						propData.type == "mnum"
+					) {
 						def = 0;
 					}
 				}
@@ -160,6 +169,8 @@ interface ObjJsonData {
 	mirrorObj?: string;
 	size?: [number, number];
 	minSize?: [number, number];
+	drawSprite?: string;
+	spriteRect?: string;
 }
 
 interface ObjJsonPropiety {
@@ -171,7 +182,11 @@ interface ObjJsonPropiety {
 	options?: any[];
 	mirrorOptions?: any[];
 	default?: any;
-	linkData?: any[];
+	linkJson?: any[];
+	jsOptions?: string
+	required?: boolean
+	cvArraySize?: number;
+	cvCoordColor?: string;
 }
 
 let global = new Global();

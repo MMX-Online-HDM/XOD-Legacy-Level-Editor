@@ -2,8 +2,19 @@
 	"name": "Water Zone",
 	"isShape": true,
 	"color": "lightblue",
-	"zIndex": 0,
+	"zIndex": -1,
 	"modeSettings": true
+}, {
+	"name": "Gravity Zone",
+	"isShape": true,
+	"color": "#9999ff",
+	"zIndex": 0,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "mul", "type": "num", "name": "Mul", "default": 1 },
+		{ "id": "velX", "type": "num", "name": "Vel X", "mirror": true },
+		{ "id": "velY", "type": "num", "name": "Vel Y" }
+	]
 }, {
 	"name": "Backwall Zone",
 	"isShape": true,
@@ -44,12 +55,14 @@
 	"name": "Brake Zone",
 	"isShape": true,
 	"color": "aqua",
-	"zIndex": 5
+	"zIndex": 5,
+	"modeSettings": true
 }, {
 	"name": "Turn Zone",
 	"isShape": true,
 	"color": "olive",
 	"zIndex": 6,
+	"modeSettings": true,
 	"propieties": [
 		{ "id": "turnDir",
 			"type": "mstr", "name": "Turn Dir", "mirror": true,
@@ -88,6 +101,7 @@
 	"isShape": true,
 	"color": "green",
 	"zIndex": 11,
+	"modeSettings": true,
 	"propieties": [
 		{ "id": "forceDir",
 			"type": "mstr", "name": "Force Dir", "mirror": true,
@@ -114,7 +128,8 @@
 	"modeSettings": true,
 	"propieties": [
 		{ "id": "xDir", "type": "num", "name": "X Dir", "mirror": true },
-		{ "id": "yDir", "type": "num", "name": "Y Dir" }
+		{ "id": "yDir", "type": "num", "name": "Y Dir" },
+		{ "id": "teamNum", "type": "num", "name": "Team", "default": -1 }
 	]
 }, {
 	"name": "Ladder",
@@ -127,21 +142,24 @@
 	"isShape": true,
 	"color": "lightcoral",
 	"zIndex": 30,
-	"isArea": true
+	"isArea": true,
+	"modeSettings": true
 }, {
 	"name": "Spawn Point",
 	"image": "resources/images/spawnPoint.png",
 	"zIndex": 50,
+	"modeSettings": true,
 	"propieties": [
 		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true },
 		{ "id": "raceStartSpawn", "type": "bool", "name": "Race Spawn" },
-		{ "id": "teamNum", "type": "num", "default": -1 }
+		{ "id": "tdmTeamNum", "type": "num", "name": "TDM Team", "default": -1 }
 	]
 }, {
 	"name": "Blue Spawn",
 	"image": "resources/images/blueSpawnPoint.png",
 	"zIndex": 51,
 	"mirrorObj": "Red Spawn",
+	"modeSettings": false,
 	"propieties": [
 		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true }
 	]
@@ -150,6 +168,7 @@
 	"image": "resources/images/redSpawnPoint.png",
 	"zIndex": 52,
 	"mirrorObj": "Blue Spawn",
+	"modeSettings": false,
 	"propieties": [
 		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true }
 	]
@@ -157,12 +176,14 @@
 	"name": "Blue Flag",
 	"image": "resources/images/blueFlag.png",
 	"zIndex": 60,
-	"mirrorObj": "Red Flag"
+	"mirrorObj": "Red Flag",
+	"modeSettings": false
 }, {
 	"name": "Red Flag",
 	"image": "resources/images/redFlag.png",
 	"zIndex": 61,
-	"mirrorObj": "Blue Flag"
+	"mirrorObj": "Blue Flag",
+	"modeSettings": false
 },{
 	"name": "Control Point",
 	"image": "resources/images/controlPoint.png",
@@ -219,6 +240,7 @@
 	"name": "Music Source",
 	"image": "resources/images/musicSource.png",
 	"zIndex": 102,
+	"modeSettings": true,
 	"propieties": [
 		{ "id": "musicName", "type": "str" }
 	]
@@ -226,6 +248,7 @@
 	"name": "Goal",
 	"image": "resources/images/victoryPoint.png",
 	"zIndex": 111,
+	"modeSettings": false,
 	"propieties": [
 		{ "id": "mirroredGoal", "type": "bool", "name": "Mirrored Goal" }
 	]
@@ -234,6 +257,7 @@
 	"isShape": true,
 	"color": "purple",
 	"zIndex": 112,
+	"modeSettings": false,
 	"propieties": [
 		{ "id": "unclimbable", "type": "bool", "name": "Unclimbable" }
 	]
@@ -242,15 +266,15 @@
 	"image": "resources/images/mapSpritePlaceholder.png",
 	"zIndex": 85,
 	"modeSettings": true,
-	"link": { "id": "id", "type": "link", "name": "ID", "json": "pickups" }
+	"link": { "id": "id", "type": "link", "name": "ID", "linkJson": "pickups" }
 }, {
 	"name": "Actor Spawner",
 	"image": "resources/images/mapSpritePlaceholder.png",
 	"zIndex": 82,
 	"modeSettings": true,
 	"propieties": [
-		{ "id": "id", "type": "link", "name": "ID", "json": "pickups" },
-		{ "id": "teamNum", "type": "int", "name": "Team", "default": -1 }
+		{ "id": "id", "type": "link", "name": "ID", "linkJson": "pickups" },
+		{ "id": "teamNum", "type": "num", "name": "Team", "default": -1 }
 	]
 }, {
 	"name": "Enemy Spawner",
@@ -258,7 +282,76 @@
 	"zIndex": 83,
 	"modeSettings": true,
 	"propieties": [
-		{ "id": "id", "type": "link", "name": "ID", "json": "enemies" },
-		{ "id": "teamNum", "type": "int", "name": "Team", "default": -1 }
+		{ "id": "id", "type": "link", "name": "ID", "linkJson": "enemies" },
+		{ "id": "teamNum", "type": "num", "name": "Team", "default": -1 }
+	]
+}, {
+	"name": "Map Sprite",
+	"image": "resources/images/mapSpritePlaceholder.png",
+	"drawSprite": "spriteName",
+	"spriteRect": "spriteName",
+	"zIndex": 100,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "spriteName",
+			"type": "mstr", "name": "Sprite", "required": true,
+			"jsOptions": "return t.getMapSpriteOptions()"
+		},
+		{ "id": "repeatX", "type": "num", "name": "Repeat X", "default": 1 },
+		{ "id": "repeatXPadding", "type": "num", "name": "X Padding", "mirror": true },
+		{ "id": "repeatY", "type": "num", "name": "Repeat Y", "default": 1 },
+		{ "id": "repeatYPadding", "type": "num", "name": "Y Padding" },
+		{ "id": "zIndex",
+			"type": "mstr", "name": "Z Index", "default": "aboveBackground",
+			"options": [
+				"aboveForeground", "aboveInstances", "aboveBackground",
+				"aboveBackwall", "aboveParallax"
+			]
+		},
+		{ "id": "parallaxIndex", "type": "num", "name": "Parallax Index", "default": -1 },
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true },
+		{ "id": "flipY", "type": "bool", "name": "Flip Y" },
+		{ "id": "destructableFlag", "type": "mnum", "name": "Destructable Flag",
+			"options": [1, 2, 3, 4]
+		},
+		{ "id": "destructableHealth", "type": "num", "name": "Health", "default": 12 },
+		{ "id": "destroyInstanceName", "type": "str", "name": "Link Instances" },
+		{ "id": "gibSpriteName", "type": "str", "name": "Gib Sprite" },
+		{ "id": "respawnTime", "type": "num", "name": "Respawn Time", "default": -1 },
+		{ "id": "isGlass", "type": "bool", "name": "Glass" }
+	]
+}, {
+	"name": "Moving Platform",
+	"image": "resources/images/mapSpritePlaceholder.png",
+	"drawSprite": "spriteName",
+	"zIndex": 101,
+	"modeSettings": true,
+	"propieties": [
+		{ "id": "spriteName",
+			"type": "mstr", "name": "Sprite", "required": true,
+			"jsOptions": "return t.getMapSpriteOptions()"
+		},
+		{ "id": "moveData", "type": "lstr", "name": "Move Data",
+			"cvArraySize": 3, "cvCoordColor": "red"
+		},
+		{ "id": "moveSpeed", "type": "num", "name": "Move Speed", "default": 50 },
+		{ "id": "timeOffset", "type": "mlstr", "name": "Time Offset"},
+		{ "id": "nodeName", "type": "str", "name": "Linked Node" },
+		{ "id": "killZoneName", "type": "str", "name": "Linked Kill Zone" },
+		{ "id": "zIndex",
+			"type": "mstr", "name": "Z Index", "default": "aboveBackground",
+			"options": [
+				"aboveForeground", "aboveInstances", "aboveBackground",
+				"aboveBackwall", "aboveParallax"
+			]
+		},
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true },
+		{ "id": "flipY", "type": "bool", "name": "Flip Y" },
+		{ "id": "flipXOnMoveLeft", "type": "bool", "name": "Flip X OnMove" },
+		{ "id": "flipYOnMoveUp", "type": "bool", "name": "Flip Y OnMove" },
+		{ "id": "idleSpriteName",
+			"type": "mstr", "name": "Idle Sprite", "required": true,
+			"jsOptions": "return t.getMapSpriteOptions()"
+		}
 	]
 }]

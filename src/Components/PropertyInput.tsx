@@ -30,6 +30,8 @@ export class PropertyInput extends React.Component<PropertyInputProps, {}> {
 	constructor(props: PropertyInputProps) {
 		super(props);
 		this.state = {};
+		let isMultiLine = props.typeName == "lstr" || props.multiLineString;
+		
 		if (typeof props.value === "number") {
 			this.propertyInputType = PropertyInputType.Number;
 		}
@@ -45,16 +47,17 @@ export class PropertyInput extends React.Component<PropertyInputProps, {}> {
 			}
 			else if (
 				props.typeName == "mstr" ||
+				props.typeName == "lstr" ||
 				props.typeName == "str" ||
 				props.typeName == "link"
 			) {
 				this.propertyInputType = (
-					props.multiLineString ?
+					isMultiLine ?
 					PropertyInputType.MultiLineString :
 					PropertyInputType.String
 				);
 			}
-			else if (props.typeName == "num") {
+			else if (props.typeName == "num" || props.typeName == "mnum") {
 				this.propertyInputType = PropertyInputType.Number;
 			}
 		}

@@ -151,10 +151,11 @@ export class Level {
 		if (this.width > 35000 || this.height > 35000) {
 			errors += "-Map is too large (max 35000x35000)\n";
 		}
+		/*
 		if (this.instances.some(i => i.objectName === "Map Sprite" && !i.properties.spriteName)) {
 			errors += "-Some map sprites are missing sprites\n";
 		}
-		/*if ((this.name.endsWith("_md") || this.name.endsWith("_1v1")) &&
+		if ((this.name.endsWith("_md") || this.name.endsWith("_1v1")) &&
 			this.instances.some(
 				i => i.objectName === "Red Flag" || i.objectName === "Blue Flag" ||
 				i.objectName === "Control Point")
@@ -177,6 +178,24 @@ export class Level {
 		  errors += "-Map may only have one goal\n";
 		}
 		*/
+
+		// Iterate objects for error checks.
+		for (let i = 0; i < this.instances.length; i++) {
+			// Check if required propieties are empty.
+			let obj = this.instances[i].obj;
+			// Skip if built-in with no propieties.
+			if (!obj) { continue; }
+			let props = this.instances[i].properties;
+			let bprops = obj.baseProperties;
+			if (bprops.length == 0) { continue }
+			for (let j = 0; j <= props.length; j++) {
+				let bprop = bprops[i];
+				let value = [bprop.name];
+				if (props[i].required && value == null) {
+					errors += `-Missing required propiety ${obj.name}.${props}\n`;
+				}
+			}
+		}
 
 		let movingPlatforms = this.instances.filter(i => i.objectName === "Moving Platform");
 		for (let movingPlatform of movingPlatforms) {
@@ -294,8 +313,11 @@ export class Level {
 			if (instance.mirrorEnabled === MirrorEnabled.NonMirroredOnly) {
 				return false;
 			}
-			// Just allow all to go over bounds if MirrorOnly is true.
-			if (instance.mirrorEnabled === MirrorEnabled.MirroredOnly) {
+			// Just allow all to go over bounds if MirrorOnly or bigger is true.
+			if (instance.mirrorEnabled === MirrorEnabled.MirroredOnly ||
+				instance.mirrorEnabled === MirrorEnabled.KeepNonMirror ||
+				instance.mirrorEnabled === MirrorEnabled.KeepMirror
+			) {
 				return true;
 			}
 			if (instance.points) {
@@ -327,7 +349,17 @@ export class Level {
 
 		// Apply changes to existing nodes
 		for (let instance of clonedLevel.instances) {
-			if (instance.properties?.doNotMirror === true) {
+			let disableMirror = (
+				instance.properties?.doNotMirror === true ||
+				instance.obj?.disableMirroring == true ||
+				instance.mirrorEnabled === MirrorEnabled.KeepNonMirror
+			);
+			if (instance.obj?.disableMirroring == true &&
+				instance.mirrorEnabled === MirrorEnabled.KeepMirror
+			) {
+				disableMirror = false;
+			}
+			if (disableMirror) {
 				instancesNotToMirror.add(instance);
 			}
 			if (instance.points) {
@@ -352,16 +384,13 @@ export class Level {
 			}
 			else {
 				let navMeshNode = instance.properties as NavMeshNode;
-				if (navMeshNode?.isRedFlagNode === true) {
-					navMeshNode.isRedFlagNode = false;
-				}
+				//if (navMeshNode?.isRedFlagNode === true) {
+				//	navMeshNode.isRedFlagNode = false;
+				//}
 				// Control points should not be mirrored, as by design the mode is asymmetrical
 				//if (instance.objectName === "Control Point") {
 				//	instancesNotToMirror.add(instance);
 				//}
-				if (instance.obj.disableMirroring) {
-					instancesNotToMirror.add(instance);
-				}
 				if (instance.properties?.raceStartSpawn === true) {
 					instancesNotToMirror.add(instance);
 				}
@@ -437,16 +466,6 @@ export class Level {
 				}
 				*/
 
-				// Cloned map sprite: flip x dir
-				if (clonedInstance.objectName === "Map Sprite") {
-					if (clonedInstance.properties.flipX === undefined) {
-						clonedInstance.properties.flipX = true;
-					}
-					else {
-						clonedInstance.properties.flipX = !clonedInstance.properties.flipX;
-					}
-				}
-
 				// Cloned moving platform
 				if (clonedInstance.objectName === "Moving Platform") {
 					let moveData: string = clonedInstance.properties.moveData;
@@ -473,9 +492,12 @@ export class Level {
 
 			clonedInstances.push(clonedInstance);
 		}
-
+		// Remove KeepMirror only variants.
+		clonedLevel.instances = clonedLevel.instances.filter(
+			i => i.mirrorEnabled !== MirrorEnabled.KeepMirror
+		);
+		// Add mirrord variants to main list.
 		clonedLevel.instances = clonedLevel.instances.concat(clonedInstances);
-
 		_.remove(clonedLevel.instances, i => i.properties?.mirroredGoal === true && i.pos.x < this.mirrorX);
 
 		// Nav mesh linking cleanup

@@ -21,6 +21,9 @@ export class Obj {
 	modeSettings: boolean = false;
 	disableMirroring: boolean = false;
 	mirrorObj: string = "";
+	spriteRect: string = ""
+	drawSprite: string = ""
+	showLabel: boolean = false;
 
 	constructor(
 		name: string, isShape: boolean, color: string,
@@ -59,7 +62,7 @@ export class Obj {
 		let htmlProps = [];
 
 		for (let i = 0; i < this.baseProperties.length; i++) {
-			htmlProps[htmlProps.length] = this.baseProperties[i].renderCode(t);
+			htmlProps[htmlProps.length] = this.baseProperties[i].renderCode(this, t);
 		}
 		return htmlProps;
 	}
@@ -74,12 +77,26 @@ export class PropertyData {
 	alwaysMirror: boolean;
 	options?: any[];
 	mirrorOptions?: any[];
-	linkData?: any[];
-	singleLine?: boolean;
-	multiLineString?: boolean;
+	linkJson?: any[];
+	jsOptions?: string;
+	required: boolean;
+	cvArraySize: number = 0;
+	cvCoordColor: string = "";
 
-	renderCode(t: any): JSX.Element {
-		if (this.options?.length > 0) {
+	renderCode(obj: Obj, t: any): JSX.Element {
+		// Eval is a massive security risk. 
+		if (this.jsOptions != null && this.jsOptions.length > 0) {
+			let optionsFunct = new Function("obj", "prop", "t", this.jsOptions);
+			return (<
+				PropertyInput
+				propertyName={this.name}
+				value={t.getPropertyValue(this.name) ?? this.default}
+				displayName={this.displayName}
+				levelEditor={t}
+				options={optionsFunct(obj, this, t)}
+				typeName={this.type}
+			/>);
+		} else if (this.options?.length > 0) {
 			return (<
 				PropertyInput
 				propertyName={this.name}
@@ -130,7 +147,9 @@ export class PropertyData {
 			return -val;
 		}
 		// If is muti-options we flip them.
-		if (this.type == "msrt" && this.options?.length > 0 && this.mirrorOptions?.length > 0) {
+		if ((this.type == "msrt" || this.type == "mnum" ) &&
+			this.options?.length > 0 && this.mirrorOptions?.length > 0
+		) {
 			// Iterate both arrays. With the same bound to prevent errors.
 			for (let i = 0; i < this.options.length && i < this.mirrorOptions.length; i++) {
 				// If we find a match we return that.

@@ -151,12 +151,14 @@ export class Instance {
 		return [new Point(x3, y3), new Point(x4, y4)];
 	}
 
-	getMovingPlatformPoints(moveData: string) {
+	getMovingPlatformPoints(moveData: string, arraySize: number) {
 		let points: Point[] = [];
 		let lines = moveData.split("\n");
 		for (let line of lines) {
 			let pieces = line.split(",");
-			if (pieces.length === 3) {
+			// Print only if it matches target size.
+			// Otherwise the user may not notice something is wrong.
+			if (pieces.length === arraySize) {
 				let x = Number(pieces[0]);
 				let y = Number(pieces[1]);
 				if (!isNaN(x) && !isNaN(y)) {
@@ -175,9 +177,14 @@ export class Instance {
 			} else {
 				this.drawShapeInstance(ctx);
 			}
+			if (this.obj.drawSprite) {
+				this.drawMapSpriteInstance(ctx, viewPort);
+			}
 		}
-		else if (this.objectName === "Map Sprite" || this.objectName === "Moving Platform") {
-			this.drawMapSpriteInstance(ctx, viewPort);
+		else if (this.obj.drawSprite) {
+			if (!this.drawMapSpriteInstance(ctx, viewPort)) {
+				this.drawNonShapeInstance(ctx);
+			}
 		}
 		else {
 			this.drawNonShapeInstance(ctx);
@@ -274,8 +281,12 @@ export class Instance {
 	}
 
 	drawMapSpriteInstance(ctx: CanvasRenderingContext2D, viewPort: Rect) {
-		let sprite = global.sprites.find(s => s.name === this.properties.spriteName);
-		if (!sprite) return;
+		// Load sprite propiety id. If empty we use "spriteName"
+		let spriteName = this.obj.drawSprite;
+		if (spriteName) { spriteName = "spriteName"; }
+		// Load sprite, if empty we return.
+		let sprite = global.sprites.find(s => s.name === this.properties[spriteName]);
+		if (!sprite) { return false; }
 
 		let repeatX: number = this.properties?.repeatX ?? 1;
 		let repeatXPadding: number = this.properties?.repeatXPadding ?? 0;
@@ -294,6 +305,7 @@ export class Instance {
 				}
 			}
 		}
+		return true;
 	}
 
 	drawNonShapeInstance(ctx: CanvasRenderingContext2D) {
@@ -362,33 +374,47 @@ export class Instance {
 				}
 			}
 		}
-
-		if (this.objectName == "Moving Platform") {
-			let moveData: string = this.properties?.moveData ?? "";
-			let points: Point[] = this.getMovingPlatformPoints(moveData);
-			for (let i = 0; i < points.length - 1; i++) {
-				DrawWrappers.drawLine(
-					ctx, points[i].x, points[i].y,
-					points[i + 1].x, points[i + 1].y, "red", 2
-				);
+	
+		if (this.obj?.baseProperties != null) {
+			for (let i = 0; i < this.obj.baseProperties.length; i++) {
+				let bprop = this.obj?.baseProperties[i];
+				if (!bprop) {
+					continue;
+				}
+				if (bprop.cvCoordColor != "") {
+					if (bprop.cvArraySize < 2) { continue }
+					let moveData: string = this.properties[bprop.name]
+					if (!moveData) { continue; }
+					let points: Point[] = this.getMovingPlatformPoints(moveData, bprop.cvArraySize);
+					for (let i = 0; i < points.length - 1; i++) {
+						DrawWrappers.drawLine(
+							ctx, points[i].x, points[i].y,
+							points[i + 1].x, points[i + 1].y, bprop.cvCoordColor, 2
+						);
+					}
+				}
 			}
 		}
 
-		if (data.showInstanceLabels && this.objectName === "Ladder") {
-			let rect = this.getRect();
-			let num = this.getNum();
-			//DrawWrappers.drawText(
-			//	ctx, num === 0 ? "" : num.toString(), rect.x2, 
-			//	(rect.y1 + rect.y2) / 2, "black", "white", 18
-			//);
-		}
+		if (data.showInstanceLabels) {
+			if  (this.isShape && this.obj?.showLabel) {
+				let rect = this.getRect();
+				let num = this.getNum();
+				DrawWrappers.drawText(
+					ctx, num === 0 ? "" : num.toString(), rect.x2, 
+					(rect.y1 + rect.y2) / 2, "white", "black", 8
+				);
+			}
 
-		if (data.showInstanceLabels && !this.isShape && this.obj.name == "Node") {
-			let num = this.getNum();
-			DrawWrappers.drawText(
-				ctx, num === 0 ? "" : num.toString(),
-				this.pos.x + 4, this.pos.y + 4, "white", "black", 8
-			);
+			if (data.showInstanceLabels && !this.isShape &&
+				(this.obj.name == "Node" || this.obj?.showLabel)
+			) {
+				let num = this.getNum();
+				DrawWrappers.drawText(
+					ctx, num === 0 ? "" : num.toString(),
+					this.pos.x + 4, this.pos.y + 4, "white", "black", 8
+				);
+			}
 		}
 	}
 
@@ -488,8 +514,8 @@ export class Instance {
 
 	getRect() {
 		if (!this.isShape) {
-			if (this.objectName.startsWith("Map Sprite")) {
-				let spriteName = this.properties.spriteName;
+			if (this.obj.spriteRect != "") {
+				let spriteName = this.properties[this.obj.spriteRect];
 				let sprite = global.sprites.find(s => s.name === spriteName);
 				if (sprite?.frames == null || sprite.frames.length === 0) {
 					let xOff = this.obj.iconSize[0] / 2;

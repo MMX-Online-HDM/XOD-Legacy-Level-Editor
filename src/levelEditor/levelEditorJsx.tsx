@@ -205,67 +205,87 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 						<div style={{ width: 6 }} />
 						<div>Clicked Mouse Coords: {Math.round(t.levelCanvas.lastClickX)},{Math.round(t.levelCanvas.lastClickY)}</div>
 					</div>
+					<div id="map-control-tabs">
+						<button className="maptab-button active" onClick={e => toggleTab(e, 0)}>Properties</button>
+						<button className="maptab-button" onClick={e => toggleTab(e, 1)}>Parallax</button>
+						<button className="maptab-button" onClick={e => toggleTab(e, 2)}>Instance</button>
+					</div>
 					<div id="map-control-menu">
-						<div id="map-properties">
-							<div><h3 style={{ margin: 0 }}>Map data</h3></div>
-							<div>
-								Short Name: <input type="text" maxLength={14} value={state.selectedLevel.shortName ?? ""} onChange={e => { state.selectedLevel.shortName = e.target.value; t.cssld(); }} /> |
-								Display Name: <input type="text" maxLength={25} value={state.selectedLevel.displayName ?? ""} onChange={e => { state.selectedLevel.displayName = e.target.value; t.cssld(); }} /> |
-								Custom Map Download Url: <input type="text" maxLength={128} style={{ "width": "350px" }} value={state.selectedLevel.customMapUrl ?? ""} onChange={e => { state.selectedLevel.customMapUrl = e.target.value; t.cssld(); }} />
+						<div id="map-proptab">
+							<div id="map-properties">
+								<div id="map-properties-element">
+									Short Name: <input type="text" maxLength={14} value={state.selectedLevel.shortName ?? ""} onChange={e => { state.selectedLevel.shortName = e.target.value; t.cssld(); }} />
+								</div><div id="map-properties-element">
+									Display Name: <input type="text" maxLength={25} value={state.selectedLevel.displayName ?? ""} onChange={e => { state.selectedLevel.displayName = e.target.value; t.cssld(); }} />
+								</div><div id="map-properties-element">
+									Custom Map Download Url: <input type="text" maxLength={128} style={{ "width": "350px" }} value={state.selectedLevel.customMapUrl ?? ""} onChange={e => { state.selectedLevel.customMapUrl = e.target.value; t.cssld(); }} />
+								</div>
+
+								<div id="map-properties-element">
+									Map Size:
+									<NumberInput initialValue={state.selectedLevel.width} onSubmit={num => { t.changeWidth(num); }} /> x&nbsp;
+									<NumberInput initialValue={state.selectedLevel.height} onSubmit={num => { t.changeHeight(num); }} />
+								</div><div id="map-properties-element">
+									Mirror X: <NumberInput initialValue={state.selectedLevel.mirrorX} onSubmit={num => { state.selectedLevel.mirrorX = num; t.cssld(); }} />
+								</div><div id="map-properties-element">
+									<input type="checkbox" checked={state.selectedLevel.mirroredOnly ?? false} onChange={e => { state.selectedLevel.mirroredOnly = e.target.checked; t.cssld(); }} />Mirrored Only
+								</div><div id="map-properties-element">
+									<input type="checkbox" checked={state.selectedLevel.mirrorMapImages ?? true} onChange={e => { state.selectedLevel.mirrorMapImages = e.target.checked; t.cssld(); }} />Mirror Map Images
+									{/*Kill Y: <NumberInput initialValue={state.selectedLevel.killY} onSubmit={num => {state.selectedLevel.killY = num; t.cssld();}} /> |*/}
+									{/*Water Y: <NumberInput initialValue={state.selectedLevel.waterY} onSubmit={num => {state.selectedLevel.waterY = num; t.cssld();}} /> |*/}
+									{/*Max Players: <NumberInput initialValue={state.selectedLevel.maxPlayers} onSubmit={num => {state.selectedLevel.maxPlayers = Helpers.clamp(Math.round(num), 2, 16); t.cssld();}} />*/}
+								</div><div id="map-properties-element">
+									<input type="checkbox" checked={state.selectedLevel.supportsLargeCam ?? false} onChange={e => { state.selectedLevel.supportsLargeCam = e.target.checked; t.cssld(); }} /> Supports Large Cam
+								</div><div id="map-properties-element">
+									<input type="checkbox" checked={state.selectedLevel.defaultLargeCam ?? false} onChange={e => { state.selectedLevel.defaultLargeCam = e.target.checked; t.cssld(); }} /> Default Large Cam
+								</div><div id="map-properties-element">
+									BG Color Hex: <input style={{ width: "50px" }} maxLength={6} type="text" value={state.selectedLevel.bgColorHex ?? ""} onChange={e => { state.selectedLevel.bgColorHex = e.target.value; t.cssld(); }} />
+								</div><div id="map-properties-element">
+									<input type="checkbox" checked={state.selectedLevel.raceOnly ?? false} onChange={e => { state.selectedLevel.raceOnly = e.target.checked; t.cssld(); }} /> Race only?
+								</div>
+
+								<div id="map-properties-element">
+									Background Shader: <input type="text" value={state.selectedLevel.backgroundShader ?? ""} onChange={e => { state.selectedLevel.backgroundShader = e.target.value; t.cssld(); }} />
+								</div><div id="map-properties-element">
+									Bg. Shader Image: <input type="text" value={state.selectedLevel.backgroundShaderImage ?? ""} onChange={e => { state.selectedLevel.backgroundShaderImage = e.target.value; t.cssld(); }} />
+								</div><div id="map-properties-element">
+									Parallax Shader: <input type="text" value={state.selectedLevel.parallaxShader ?? ""} onChange={e => { state.selectedLevel.parallaxShader = e.target.value; t.cssld(); }} />
+								</div><div id="map-properties-element">
+									Px. Shader Image: <input type="text" value={state.selectedLevel.parallaxShaderImage ?? ""} onChange={e => { state.selectedLevel.parallaxShaderImage = e.target.value; t.cssld(); }} />
+								</div>
+
+								<div id="map-properties-element">
+									<input type="checkbox" checked={state.showBackground} onChange={e => { state.showBackground = e.target.checked; t.redraw(true); t.changeState(); }} />
+									Background:
+									<select style={{ width: "200px" }} value={t.getBgPath(state.selectedLevel.backgroundPath)} onChange={e => { t.onBackgroundChange(e.target.value); t.cssld(); }}>
+										<option key={-1} value=""></option>
+										{t.availableBackgrounds.map((background, index) => (
+											<option key={index} value={background.uid}>{background.shortPath}</option>
+										))}
+									</select>
+								</div><div id="map-properties-element">
+									<input type="checkbox" checked={state.showForeground} onChange={e => { state.showForeground = e.target.checked; t.redraw(true); t.changeState(); }} />
+									Foreground:
+									<select style={{ width: "200px" }} value={t.getBgPath(state.selectedLevel.foregroundPath)} onChange={e => { t.onForegroundChange(e.target.value); t.cssld(); }}>
+										<option key={-1} value=""></option>
+										{t.availableBackgrounds.map((background, index) => (
+											<option key={index} value={background.uid}>{background.shortPath}</option>
+										))}
+									</select>
+								</div><div id="map-properties-element">
+									<input type="checkbox" checked={state.showBackwall} onChange={e => { state.showBackwall = e.target.checked; t.redraw(true); t.changeState(); }} />
+									Backwall:
+									<select style={{ width: "200px" }} value={t.getBgPath(state.selectedLevel.backwallPath)} onChange={e => { t.onBackwallChange(e.target.value); t.cssld(); }}>
+										<option key={-1} value=""></option>
+										{t.availableBackgrounds.map((background, index) => (
+											<option key={index} value={background.uid}>{background.shortPath}</option>
+										))}
+									</select>
+								</div>
 							</div>
+						</div>
 
-							<div>
-								Map Size:
-								<NumberInput initialValue={state.selectedLevel.width} onSubmit={num => { t.changeWidth(num); }} /> x&nbsp;
-								<NumberInput initialValue={state.selectedLevel.height} onSubmit={num => { t.changeHeight(num); }} /> |
-								Mirror X: <NumberInput initialValue={state.selectedLevel.mirrorX} onSubmit={num => { state.selectedLevel.mirrorX = num; t.cssld(); }} /> |
-								<input type="checkbox" checked={state.selectedLevel.mirroredOnly ?? false} onChange={e => { state.selectedLevel.mirroredOnly = e.target.checked; t.cssld(); }} />Mirrored Only |
-								<input type="checkbox" checked={state.selectedLevel.mirrorMapImages ?? true} onChange={e => { state.selectedLevel.mirrorMapImages = e.target.checked; t.cssld(); }} />Mirror Map Images |
-								{/*Kill Y: <NumberInput initialValue={state.selectedLevel.killY} onSubmit={num => {state.selectedLevel.killY = num; t.cssld();}} /> |*/}
-								{/*Water Y: <NumberInput initialValue={state.selectedLevel.waterY} onSubmit={num => {state.selectedLevel.waterY = num; t.cssld();}} /> |*/}
-								{/*Max Players: <NumberInput initialValue={state.selectedLevel.maxPlayers} onSubmit={num => {state.selectedLevel.maxPlayers = Helpers.clamp(Math.round(num), 2, 16); t.cssld();}} />*/}
-								<input type="checkbox" checked={state.selectedLevel.supportsLargeCam ?? false} onChange={e => { state.selectedLevel.supportsLargeCam = e.target.checked; t.cssld(); }} /> Supports Large Cam |
-								<input type="checkbox" checked={state.selectedLevel.defaultLargeCam ?? false} onChange={e => { state.selectedLevel.defaultLargeCam = e.target.checked; t.cssld(); }} /> Default Large Cam |
-								BG Color Hex: <input style={{ width: "50px" }} maxLength={6} type="text" value={state.selectedLevel.bgColorHex ?? ""} onChange={e => { state.selectedLevel.bgColorHex = e.target.value; t.cssld(); }} /> |
-								<input type="checkbox" checked={state.selectedLevel.raceOnly ?? false} onChange={e => { state.selectedLevel.raceOnly = e.target.checked; t.cssld(); }} /> Race only?
-							</div>
-
-							<div>
-								Background Shader: <input type="text" value={state.selectedLevel.backgroundShader ?? ""} onChange={e => { state.selectedLevel.backgroundShader = e.target.value; t.cssld(); }} />
-								Bg. Shader Image: <input type="text" value={state.selectedLevel.backgroundShaderImage ?? ""} onChange={e => { state.selectedLevel.backgroundShaderImage = e.target.value; t.cssld(); }} /> |
-								Parallax Shader: <input type="text" value={state.selectedLevel.parallaxShader ?? ""} onChange={e => { state.selectedLevel.parallaxShader = e.target.value; t.cssld(); }} />
-								Px. Shader Image: <input type="text" value={state.selectedLevel.parallaxShaderImage ?? ""} onChange={e => { state.selectedLevel.parallaxShaderImage = e.target.value; t.cssld(); }} />
-							</div>
-
-							<input type="checkbox" checked={state.showBackground} onChange={e => { state.showBackground = e.target.checked; t.redraw(true); t.changeState(); }} />
-							Background:
-							<select style={{ width: "200px" }} value={t.getBgPath(state.selectedLevel.backgroundPath)} onChange={e => { t.onBackgroundChange(e.target.value); t.cssld(); }}>
-								<option key={-1} value=""></option>
-								{t.availableBackgrounds.map((background, index) => (
-									<option key={index} value={background.uid}>{background.shortPath}</option>
-								))}
-							</select>
-
-							<input type="checkbox" checked={state.showForeground} onChange={e => { state.showForeground = e.target.checked; t.redraw(true); t.changeState(); }} />
-							Foreground:
-							<select style={{ width: "200px" }} value={t.getBgPath(state.selectedLevel.foregroundPath)} onChange={e => { t.onForegroundChange(e.target.value); t.cssld(); }}>
-								<option key={-1} value=""></option>
-								{t.availableBackgrounds.map((background, index) => (
-									<option key={index} value={background.uid}>{background.shortPath}</option>
-								))}
-							</select>
-
-							<input type="checkbox" checked={state.showBackwall} onChange={e => { state.showBackwall = e.target.checked; t.redraw(true); t.changeState(); }} />
-							Backwall:
-							<select style={{ width: "200px" }} value={t.getBgPath(state.selectedLevel.backwallPath)} onChange={e => { t.onBackwallChange(e.target.value); t.cssld(); }}>
-								<option key={-1} value=""></option>
-								{t.availableBackgrounds.map((background, index) => (
-									<option key={index} value={background.uid}>{background.shortPath}</option>
-								))}
-							</select>
-
-							<br />
-
+						<div id="map-parallaxtab" hidden={true}>
 							<input type="checkbox" checked={state.showParallaxes} onChange={e => { state.showParallaxes = e.target.checked; t.redraw(true); t.changeState(); }} />
 							Parallaxes:
 							<button onClick={e => { state.selectedLevel.parallaxes.push(new Parallax()); t.cssld(); }}>Add new</button>
@@ -300,153 +320,110 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 								))}
 							</div>
 						</div>
-
-						{
-							state.selectedInstances.length > 0 &&
-							<div id="instance-properties">
-								<h3 style={{ margin: 0 }}>Selected instance data</h3>
-								<div className="properties">
-									<div>
-										<input type="checkbox" checked={!state.selectedInstances[0].hidden} onChange={e => { state.selectedInstances[0].hidden = !e.target.checked; t.changeState(); }} />
-										Name <input type="text" value={state.selectedInstances[0].name} onChange={e => { state.selectedInstances[0].rename(e.target.value, state.selectedLevel); t.cssld(); }} />
-									</div>
-									<div>
-										Object: {state.selectedInstances[0].objectName}
-									</div>
-									{state.selectedInstances[0].pos &&
+						<div id="instance-proptab" hidden={true}>
+							{
+								state.selectedInstances.length > 0 &&
+								<div id="instance-properties">
+									<div className="properties">
 										<div>
-											x: <NumberInput initialValue={state.selectedInstances[0].pos.x} onSubmit={num => { state.selectedInstances[0].pos.x = num; t.cssld(); }} />
-											&nbsp;&nbsp;
-											y: <NumberInput initialValue={state.selectedInstances[0].pos.y} onSubmit={num => { state.selectedInstances[0].pos.y = num; t.cssld(); }} />
+											<input type="checkbox" checked={!state.selectedInstances[0].hidden} onChange={e => { state.selectedInstances[0].hidden = !e.target.checked; t.changeState(); }} /> Visible
 										</div>
-									}
-
-									Enabled in:
-									<select style={{ width: "137px" }} value={state.selectedInstances[0].mirrorEnabled} onChange={e => { state.selectedInstances[0].mirrorEnabled = Number(e.target.value); t.cssld(); }}>
-										<option key={0} value={MirrorEnabled.Both}>Mirror+Non-Mirror</option>
-										<option key={1} value={MirrorEnabled.NonMirroredOnly}>Non-Mirror Only</option>
-										<option key={2} value={MirrorEnabled.MirroredOnly}>Mirror Only</option>
-									</select>
-									{
-										state.selectedInstances[0].points &&
 										<div>
-											Shape Instance Points:
-											{
-												state.selectedInstances[0].points.map((point, index) => (
-													<div key={String(point.x) + "," + String(point.y) + "," + index}>
-														<b>{index + 1})&nbsp;</b>
-														x: <NumberInput initialValue={point.x} onSubmit={num => { point.x = num; t.cssld(); }} />
-														&nbsp;&nbsp;
-														y: <NumberInput initialValue={point.y} onSubmit={num => { point.y = num; t.cssld(); }} />
-														{state.selectedInstances[0].points.length >= 4 &&
-															<button title="Delete" onClick={e => { state.selectedInstances[0].points.splice(index, 1); t.cssld(); }}><img src="file:///resources/images/delete.png" /></button>
-														}
-													</div>
-												))
-											}
+											Name <input type="text" value={state.selectedInstances[0].name} onChange={e => { state.selectedInstances[0].rename(e.target.value, state.selectedLevel); t.cssld(); }} />
 										</div>
-									}
-								</div>
-								<div className="properties" style={{ marginTop: -18, marginLeft: 5, marginRight: 5 }}>
-									<div>Properties:</div>
-									<textarea rows={8} cols={40}
-										value={state.selectedInstances[0].getPropertiesString()}
-										onChange={e => { state.selectedInstances[0].propertiesString = e.target.value; t.forceUpdate(); }}
-										onBlur={e => t.changeProperties(e.target.value)} />
-								</div>
-
-								<div className="properties">
-									{state.selectedInstances[0].obj.renderPropCode(t)}
-
-									{
-										state.selectedInstances[0].objectName.startsWith("Map Sprite") &&
-										<>
-											<div style={{ display: "inline-block", marginRight: "5px" }}>
-												<PropertyInput propertyName="spriteName" value={t.getPropertyValue("spriteName") ?? ""} displayName="Sprite Name" levelEditor={t} options={t.getMapSpriteOptions()} />
-												<PropertyInput singleLine={true} propertyName="repeatX" value={t.getPropertyValue("repeatX") ?? 1} displayName="Repeat X" levelEditor={t} />
-												<PropertyInput singleLine={true} propertyName="repeatXPadding" value={t.getPropertyValue("repeatXPadding") ?? 1} displayName="X Padding" levelEditor={t} />
-												<br />
-												<PropertyInput singleLine={true} propertyName="repeatY" value={t.getPropertyValue("repeatY") ?? 1} displayName="Repeat Y" levelEditor={t} />
-												<PropertyInput singleLine={true} propertyName="repeatYPadding" value={t.getPropertyValue("repeatYPadding") ?? 1} displayName="Y Padding" levelEditor={t} />
-												<PropertyInput propertyName="zIndex" value={t.getPropertyValue("zIndex") ?? "aboveBackground"} displayName="Z Index" levelEditor={t} options={["aboveForeground", "aboveInstances", "aboveBackground", "aboveBackwall", "aboveParallax"]} />
-												<PropertyInput propertyName="parallaxIndex" value={t.getPropertyValue("parallaxIndex") ?? 1} displayName="Parallax Index" levelEditor={t} />
-												<PropertyInput singleLine={true} propertyName="flipX" value={t.getPropertyValue("flipX") ?? true} displayName="Flip X" levelEditor={t} />
-												<PropertyInput singleLine={true} propertyName="flipY" value={t.getPropertyValue("flipY") ?? true} displayName="Flip Y" levelEditor={t} />
-												<PropertyInput singleLine={true} propertyName="doNotMirror" value={t.getPropertyValue("doNotMirror") ?? true} displayName="DoNotMirror" levelEditor={t} />
+										<div>
+											Object: {state.selectedInstances[0].objectName}
+										</div>
+										{state.selectedInstances[0].pos &&
+											<div>
+												x: <NumberInput initialValue={state.selectedInstances[0].pos.x} onSubmit={num => { state.selectedInstances[0].pos.x = num; t.cssld(); }} />
+												&nbsp;&nbsp;
+												y: <NumberInput initialValue={state.selectedInstances[0].pos.y} onSubmit={num => { state.selectedInstances[0].pos.y = num; t.cssld(); }} />
 											</div>
-											<div style={{ display: "inline-block", verticalAlign: "top" }}>
-												<PropertyInput propertyName="destructableFlag" value={t.getPropertyValue("destructableFlag") ?? 1} displayName="Destructable Flag" levelEditor={t} options={[1, 2, 3, 4]} />
-												<PropertyInput propertyName="destructableHealth" value={t.getPropertyValue("destructableHealth") ?? 12} displayName="Destructable Health" levelEditor={t} />
-												<PropertyInput propertyName="destroyInstanceName" value={t.getPropertyValue("destroyInstanceName") ?? ""} displayName="Destroy Instance" levelEditor={t} />
-												<PropertyInput propertyName="gibSpriteName" value={t.getPropertyValue("gibSpriteName") ?? ""} displayName="Gib Sprite" levelEditor={t} options={t.getMapSpriteOptions()} />
-												<PropertyInput propertyName="destructableFlag" value={t.getPropertyValue("destructableFlag") ?? 1} displayName="Destructable Flag" levelEditor={t} options={[1, 2, 3]} />
-												<PropertyInput propertyName="respawnTime" value={t.getPropertyValue("respawnTime") ?? 0} displayName="Respawn Time" levelEditor={t} />
-												<PropertyInput propertyName="isGlass" value={t.getPropertyValue("isGlass") ?? true} displayName="Is Glass" levelEditor={t}/>
-												
-											</div>
-										</>
-									}
+										}
 
-									{
-										state.selectedInstances[0].objectName.startsWith("Moving Platform") &&
-										<>
-											<div style={{ display: "inline-block", marginRight: "5px" }}>
-												<PropertyInput propertyName="spriteName" value={t.getPropertyValue("spriteName") ?? ""} displayName="Sprite Name" levelEditor={t} options={t.getMapSpriteOptions()} />
-												<PropertyInput propertyName="moveData" multiLineString={true} value={t.getPropertyValue("moveData") ?? ""} displayName="Move Data" levelEditor={t} />
-												<PropertyInput propertyName="moveSpeed" value={t.getPropertyValue("moveSpeed") ?? 50} displayName="Move Speed" levelEditor={t} />
-												<PropertyInput propertyName="timeOffset" value={t.getPropertyValue("timeOffset") ?? 0} displayName="Time Offset" levelEditor={t} />
-											</div>
-											<div style={{ display: "inline-block", verticalAlign: "top" }}>
-												<PropertyInput propertyName="nodeName" value={t.getPropertyValue("nodeName") ?? ""} displayName="Node Name" levelEditor={t} />
-												<PropertyInput propertyName="killZoneName" value={t.getPropertyValue("killZoneName") ?? ""} displayName="Kill Zone Name" levelEditor={t} />
-												<PropertyInput propertyName="zIndex" value={t.getPropertyValue("zIndex") ?? "aboveBackground"} displayName="Z Index" levelEditor={t} options={["aboveForeground", "aboveInstances", "aboveBackground", "aboveBackwall", "aboveParallax"]} />
-												<PropertyInput propertyName="flipXOnMoveLeft" value={t.getPropertyValue("flipXOnMoveLeft") ?? true} displayName="Flip X On Move Left" levelEditor={t} />
-												<PropertyInput propertyName="flipYOnMoveUp" value={t.getPropertyValue("flipYOnMoveUp") ?? true} displayName="Flip Y On Move Up" levelEditor={t} />
-												<PropertyInput propertyName="idleSpriteName" value={t.getPropertyValue("idleSpriteName") ?? ""} displayName="Idle Sprite Name" levelEditor={t} options={t.getMapSpriteOptions()} />
-											</div>
-										</>
-									}
-
-									{
-										state.selectedInstances[0].objectName === 'Node' &&
-										<>
-											<PropertyInput propertyName="connectToSelfIfMirrored" value={t.getPropertyValue("connectToSelfIfMirrored") ?? true} displayName="Connect To Self If Mirrored" levelEditor={t} />
-											{
-												(state.selectedInstances[0].properties.neighbors ?? []).map((neighbor: NavMeshNeighbor, index: number) => (
-													<div style={{ display: "inline-block", border: "1px solid black", padding: "2px", margin: "2px" }} key={index + "_" + neighbor.nodeName}>
-														<div>
-															Neighbor: {neighbor.nodeName}
-															<button onClick={e => t.removeNeighbor(state.selectedInstances[0], neighbor.nodeName)}>🗑</button>
+										Enabled in:
+										<select style={{ width: "137px" }} value={state.selectedInstances[0].mirrorEnabled} onChange={e => { state.selectedInstances[0].mirrorEnabled = Number(e.target.value); t.cssld(); }}>
+											<option key={0} value={MirrorEnabled.Both}>{ state.selectedInstances[0].obj?.disableMirroring ? "Keep Non-Mirror (Default)" : "All" }</option>
+											<option key={1} value={MirrorEnabled.NonMirroredOnly}>{ state.selectedInstances[0].obj?.disableMirroring ? "Remove on Mirrored" : "Non-Mirror Only" }</option>
+											<option key={2} value={MirrorEnabled.MirroredOnly}>Mirror Only</option>
+											{ state.selectedInstances[0].obj?.disableMirroring != true && <option key={3} value={MirrorEnabled.KeepNonMirror}>Keep Non-Mirror</option> }
+											<option key={4} value={MirrorEnabled.KeepMirror}>Keep Mirror</option>
+										</select>
+										{
+											state.selectedInstances[0].points &&
+											<div>
+												Shape Instance Points:
+												{
+													state.selectedInstances[0].points.map((point, index) => (
+														<div key={String(point.x) + "," + String(point.y) + "," + index}>
+															<b>{index + 1})&nbsp;</b>
+															x: <NumberInput initialValue={point.x} onSubmit={num => { point.x = num; t.cssld(); }} />
+															&nbsp;&nbsp;
+															y: <NumberInput initialValue={point.y} onSubmit={num => { point.y = num; t.cssld(); }} />
+															{state.selectedInstances[0].points.length >= 4 &&
+																<button title="Delete" onClick={e => { state.selectedInstances[0].points.splice(index, 1); t.cssld(); }}><img src="file:///resources/images/delete.png" /></button>
+															}
 														</div>
-														<PropertyInput propertyName="ladderDir" value={neighbor.ladderDir ?? "up"} displayName="Ladder Climb Dir" levelEditor={t} options={["up", "down"]} neighbor={neighbor} />
-														<PropertyInput propertyName="wallDir" value={neighbor.wallDir ?? "left"} displayName="Wall Climb Dir" levelEditor={t} options={["left", "right"]} neighbor={neighbor} />
-														<PropertyInput propertyName="platformJumpDir" value={neighbor.platformJumpDir ?? "left"} displayName="Platform Jump Dir" levelEditor={t} options={["left", "right"]} neighbor={neighbor} />
-														<PropertyInput propertyName="platformJumpDirDist" value={neighbor.platformJumpDirDist ?? 30} displayName="Platform Jump Dir Dist" levelEditor={t} neighbor={neighbor} />
-														<PropertyInput propertyName="includeJumpZones" value={neighbor.includeJumpZones ?? ""} displayName="Include Jump Zones" levelEditor={t} neighbor={neighbor} />
-														<PropertyInput propertyName="movingPlatXDist" value={neighbor.movingPlatXDist ?? 60} displayName="Moving Plat X Dist" levelEditor={t} neighbor={neighbor} />
-														<PropertyInput singleLine={true} propertyName="dash" value={neighbor.dash ?? true} displayName="Dash" levelEditor={t} neighbor={neighbor} />&nbsp;
-														<PropertyInput singleLine={true} propertyName="dropFromLadder" value={neighbor.dropFromLadder ?? true} displayName="Ladder Drop" levelEditor={t} neighbor={neighbor} />&nbsp;
-														<PropertyInput singleLine={true} propertyName="isDestNodeInAir" value={neighbor.isDestNodeInAir ?? true} displayName="To Air Node" levelEditor={t} neighbor={neighbor} />
-													</div>
-												))
-											}
-										</>
-									}
-									{
-										// Game Mode Exclusion Shared
-										state.selectedInstances[0].obj.modeSettings &&
-										<>
-											<PropertyInput propertyName="nonDmOnly" value={t.getPropertyValue("nonDmOnly") ?? true} displayName="Exclude in DM" levelEditor={t} />
-											<PropertyInput propertyName="nonCtfOnly" value={t.getPropertyValue("nonCtfOnly") ?? true} displayName="Exclude in CTF" levelEditor={t} />
-											<PropertyInput propertyName="nonKothOnly" value={t.getPropertyValue("nonKothOnly") ?? true} displayName="Exclude in KOTH" levelEditor={t} />
-											<PropertyInput propertyName="nonCpOnly" value={t.getPropertyValue("nonCpOnly") ?? true} displayName="Exclude in CP" levelEditor={t} />
-											<PropertyInput propertyName="dmOnly" value={t.getPropertyValue("dmOnly") ?? true} displayName="Include in DM Only" levelEditor={t} />
-										</>
-									}
-								</div>
+													))
+												}
+											</div>
+										}
+									</div>
+									<div className="properties" style={{ marginLeft: 5, marginRight: 5 }}>
+										<div>Properties:</div>
+										<textarea rows={8} cols={40}
+											value={state.selectedInstances[0].getPropertiesString()}
+											onChange={e => { state.selectedInstances[0].propertiesString = e.target.value; t.forceUpdate(); }}
+											onBlur={e => t.changeProperties(e.target.value)} />
+									</div>
 
-							</div>
-						}
+									<div className="properties">
+										{state.selectedInstances[0].obj.baseProperties.length > 0 && <div>Flags:</div>}
+										{state.selectedInstances[0].obj.renderPropCode(t)}
+
+										{
+											state.selectedInstances[0].objectName === 'Node' &&
+											<>
+												<PropertyInput propertyName="connectToSelfIfMirrored" value={t.getPropertyValue("connectToSelfIfMirrored") ?? true} displayName="Connect To Self If Mirrored" levelEditor={t} />
+												{
+													(state.selectedInstances[0].properties.neighbors ?? []).map((neighbor: NavMeshNeighbor, index: number) => (
+														<div style={{ display: "inline-block", border: "1px solid black", padding: "2px", margin: "2px" }} key={index + "_" + neighbor.nodeName}>
+															<div>
+																Neighbor: {neighbor.nodeName}
+																<button onClick={e => t.removeNeighbor(state.selectedInstances[0], neighbor.nodeName)}>🗑</button>
+															</div>
+															<PropertyInput propertyName="ladderDir" value={neighbor.ladderDir ?? "up"} displayName="Ladder Climb Dir" levelEditor={t} options={["up", "down"]} neighbor={neighbor} />
+															<PropertyInput propertyName="wallDir" value={neighbor.wallDir ?? "left"} displayName="Wall Climb Dir" levelEditor={t} options={["left", "right"]} neighbor={neighbor} />
+															<PropertyInput propertyName="platformJumpDir" value={neighbor.platformJumpDir ?? "left"} displayName="Platform Jump Dir" levelEditor={t} options={["left", "right"]} neighbor={neighbor} />
+															<PropertyInput propertyName="platformJumpDirDist" value={neighbor.platformJumpDirDist ?? 30} displayName="Platform Jump Dir Dist" levelEditor={t} neighbor={neighbor} />
+															<PropertyInput propertyName="includeJumpZones" value={neighbor.includeJumpZones ?? ""} displayName="Include Jump Zones" levelEditor={t} neighbor={neighbor} />
+															<PropertyInput propertyName="movingPlatXDist" value={neighbor.movingPlatXDist ?? 60} displayName="Moving Plat X Dist" levelEditor={t} neighbor={neighbor} />
+															<PropertyInput singleLine={true} propertyName="dash" value={neighbor.dash ?? true} displayName="Dash" levelEditor={t} neighbor={neighbor} />&nbsp;
+															<PropertyInput singleLine={true} propertyName="dropFromLadder" value={neighbor.dropFromLadder ?? true} displayName="Ladder Drop" levelEditor={t} neighbor={neighbor} />&nbsp;
+															<PropertyInput singleLine={true} propertyName="isDestNodeInAir" value={neighbor.isDestNodeInAir ?? true} displayName="To Air Node" levelEditor={t} neighbor={neighbor} />
+														</div>
+													))
+												}
+											</>
+										}
+										{
+											// Game Mode Exclusion Shared
+											state.selectedInstances[0].obj.modeSettings &&
+											<>
+												Gamemode:
+												<PropertyInput propertyName="nonDmOnly" value={t.getPropertyValue("nonDmOnly") ?? true} displayName="Exclude in DM" levelEditor={t} />
+												<PropertyInput propertyName="nonCtfOnly" value={t.getPropertyValue("nonCtfOnly") ?? true} displayName="Exclude in CTF" levelEditor={t} />
+												<PropertyInput propertyName="nonKothOnly" value={t.getPropertyValue("nonKothOnly") ?? true} displayName="Exclude in KOTH" levelEditor={t} />
+												<PropertyInput propertyName="nonCpOnly" value={t.getPropertyValue("nonCpOnly") ?? true} displayName="Exclude in CP" levelEditor={t} />
+												<PropertyInput propertyName="dmOnly" value={t.getPropertyValue("dmOnly") ?? true} displayName="Include in DM Only" levelEditor={t} />
+											</>
+										}
+									</div>
+
+								</div>
+							}
+						</div>
 					</div>
 
 				</div>
@@ -481,4 +458,20 @@ function renderInstanceList(t: LevelEditor): JSX.Element {
 			}
 		</div>
 	);
+}
+
+function toggleTab(e: any, active: number) {
+	let tabs = [
+		document.getElementById("map-proptab"),
+		document.getElementById("map-parallaxtab"),
+		document.getElementById("instance-proptab"),
+	]
+	for (let i = 0; i < tabs.length; i++) {
+		tabs[i].hidden = i != active;
+	}
+	let tablinks = document.getElementsByClassName("maptab-button");
+	for (let i = 0; i < tablinks.length; i++) {
+		tablinks[i].className = tablinks[i].className.replace(" active", "");
+	}
+	e.currentTarget.className += " active";
 }

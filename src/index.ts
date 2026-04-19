@@ -361,6 +361,9 @@ export let api = {
 		}
 		if (selectedButtonIndex === 0) {
 			isLevelEditor = true;
+			isMapSpritePath = false;
+			spriteFolderName = "sprites";
+			spritesheetFolderName = "spritesheets";
 			mainWindow.reload();
 		}
 	},
