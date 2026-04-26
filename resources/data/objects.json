@@ -263,27 +263,36 @@
 	]
 }, {
 	"name": "Pickup Spawner",
-	"image": "resources/images/mapSpritePlaceholder.png",
+	"image": "resources/images/pickupPlaceholder.png",
 	"zIndex": 85,
 	"modeSettings": true,
-	"link": { "id": "id", "type": "link", "name": "ID", "linkJson": "pickups" }
+	"link": { "id": "id", "type": "link", "name": "ID", "linkJson": "pickups" },
+	"propieties": [
+		{ "id": "id", "type": "link", "name": "ID", "linkJson": "pickups" },
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true },
+		{ "id": "respawnTime", "type": "num", "name": "Respawn Time", "default": 15 }
+	]
 }, {
 	"name": "Actor Spawner",
-	"image": "resources/images/mapSpritePlaceholder.png",
+	"image": "resources/images/actorPlaceholder.png",
 	"zIndex": 82,
 	"modeSettings": true,
 	"propieties": [
 		{ "id": "id", "type": "link", "name": "ID", "linkJson": "pickups" },
-		{ "id": "teamNum", "type": "num", "name": "Team", "default": -1 }
+		{ "id": "teamNum", "type": "num", "name": "Team", "default": -1 },
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true },
+		{ "id": "respawnTime", "type": "num", "name": "Respawn Time", "default": 60 }
 	]
 }, {
 	"name": "Enemy Spawner",
-	"image": "resources/images/mapSpritePlaceholder.png",
+	"image": "resources/images/enemyPlaceholder.png",
 	"zIndex": 83,
 	"modeSettings": true,
 	"propieties": [
 		{ "id": "id", "type": "link", "name": "ID", "linkJson": "enemies" },
-		{ "id": "teamNum", "type": "num", "name": "Team", "default": -1 }
+		{ "id": "teamNum", "type": "num", "name": "Team", "default": -1 },
+		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true },
+		{ "id": "respawnTime", "type": "num", "name": "Respawn Time", "default": 60 }
 	]
 }, {
 	"name": "Map Sprite",
@@ -315,6 +324,7 @@
 			"options": [1, 2, 3, 4]
 		},
 		{ "id": "destructableHealth", "type": "num", "name": "Health", "default": 12 },
+		{ "id": "damageReduction", "type": "num", "name": "Damage Reduction", "default": 0 },
 		{ "id": "destroyInstanceName", "type": "str", "name": "Link Instances" },
 		{ "id": "gibSpriteName", "type": "str", "name": "Gib Sprite" },
 		{ "id": "respawnTime", "type": "num", "name": "Respawn Time", "default": -1 },

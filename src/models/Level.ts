@@ -352,7 +352,8 @@ export class Level {
 			let disableMirror = (
 				instance.properties?.doNotMirror === true ||
 				instance.obj?.disableMirroring == true ||
-				instance.mirrorEnabled === MirrorEnabled.KeepNonMirror
+				instance.mirrorEnabled === MirrorEnabled.KeepNonMirror ||
+				!instance.isShape && instance.pos.x == clonedLevel.mirrorX
 			);
 			if (instance.obj?.disableMirroring == true &&
 				instance.mirrorEnabled === MirrorEnabled.KeepMirror
@@ -368,7 +369,7 @@ export class Level {
 					// Then flag it to not be mirrored as it would be redundant
 					let minX = _.minBy(instance.points, point => point.x).x;
 					for (let point of instance.points) {
-						if (point.x > clonedLevel.mirrorX) {
+						if (point.x >= clonedLevel.mirrorX) {
 							point.x = clonedLevel.mirrorX + (clonedLevel.mirrorX - minX);
 							instancesNotToMirror.add(instance);
 						}
@@ -376,7 +377,7 @@ export class Level {
 				}
 				else {
 					for (let point of instance.points) {
-						if (point.x > clonedLevel.mirrorX) {
+						if (point.x >= clonedLevel.mirrorX) {
 							point.x = clonedLevel.mirrorX;
 						}
 					}
