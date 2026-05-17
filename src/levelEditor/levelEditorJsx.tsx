@@ -344,11 +344,12 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 
 										Enabled in:
 										<select style={{ width: "137px" }} value={state.selectedInstances[0].mirrorEnabled} onChange={e => { state.selectedInstances[0].mirrorEnabled = Number(e.target.value); t.cssld(); }}>
-											<option key={0} value={MirrorEnabled.Both}>{ state.selectedInstances[0].obj?.disableMirroring ? "Keep Non-Mirror (Default)" : "All" }</option>
-											<option key={1} value={MirrorEnabled.NonMirroredOnly}>{ state.selectedInstances[0].obj?.disableMirroring ? "Remove on Mirrored" : "Non-Mirror Only" }</option>
+											<option key={0} value={MirrorEnabled.Both}>{state.selectedInstances[0].obj?.disableMirroring ? "Keep Non-Mirror (Default)" : "All"}</option>
+											<option key={1} value={MirrorEnabled.NonMirroredOnly}>{state.selectedInstances[0].obj?.disableMirroring ? "Remove on Mirrored" : "Non-Mirror Only"}</option>
 											<option key={2} value={MirrorEnabled.MirroredOnly}>Mirror Only</option>
-											{ state.selectedInstances[0].obj?.disableMirroring != true && <option key={3} value={MirrorEnabled.KeepNonMirror}>Keep Non-Mirror</option> }
+											{state.selectedInstances[0].obj?.disableMirroring != true && <option key={3} value={MirrorEnabled.KeepNonMirror}>Keep Non-Mirror</option>}
 											<option key={4} value={MirrorEnabled.KeepMirror}>Keep Mirror</option>
+											{state.selectedInstances[0].obj?.disableMirroring != true && <option key={5} value={MirrorEnabled.DoNotMirror}>Do Not Mirror</option>}
 										</select>
 										{
 											state.selectedInstances[0].points &&
@@ -369,6 +370,9 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 												}
 											</div>
 										}
+										{state.selectedInstances[0].isShape && <div>
+											<PropertyInput propertyName="doNotConnectIfMirrored" value={t.getPropertyValue("doNotConnectIfMirrored") ?? true} displayName="Do not connect if mirrored" levelEditor={t} />
+										</div>}
 									</div>
 									<div className="properties" style={{ marginLeft: 5, marginRight: 5 }}>
 										<div>Properties:</div>
@@ -398,6 +402,7 @@ function renderLevelCanvas(t: LevelEditor): JSX.Element {
 															<PropertyInput propertyName="platformJumpDir" value={neighbor.platformJumpDir ?? "left"} displayName="Platform Jump Dir" levelEditor={t} options={["left", "right"]} neighbor={neighbor} />
 															<PropertyInput propertyName="platformJumpDirDist" value={neighbor.platformJumpDirDist ?? 30} displayName="Platform Jump Dir Dist" levelEditor={t} neighbor={neighbor} />
 															<PropertyInput propertyName="includeJumpZones" value={neighbor.includeJumpZones ?? ""} displayName="Include Jump Zones" levelEditor={t} neighbor={neighbor} />
+															<PropertyInput propertyName="excludeJumpZones" value={neighbor.excludeJumpZones ?? ""} displayName="Exclude Jump Zones" levelEditor={t} neighbor={neighbor} />
 															<PropertyInput propertyName="movingPlatXDist" value={neighbor.movingPlatXDist ?? 60} displayName="Moving Plat X Dist" levelEditor={t} neighbor={neighbor} />
 															<PropertyInput singleLine={true} propertyName="dash" value={neighbor.dash ?? true} displayName="Dash" levelEditor={t} neighbor={neighbor} />&nbsp;
 															<PropertyInput singleLine={true} propertyName="dropFromLadder" value={neighbor.dropFromLadder ?? true} displayName="Ladder Drop" levelEditor={t} neighbor={neighbor} />&nbsp;

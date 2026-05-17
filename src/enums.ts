@@ -4,4 +4,5 @@ export enum MirrorEnabled {
 	MirroredOnly,
 	KeepNonMirror,
 	KeepMirror,
+	DoNotMirror,
 };

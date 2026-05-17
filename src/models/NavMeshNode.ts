@@ -22,6 +22,7 @@ export interface NavMeshNeighbor {
 	platformJumpDirDist?: number;
 	dropFromLadder?: boolean;
 	includeJumpZones?: string;
+	excludeJumpZones?: string;
 	movingPlatXDist?: number;
 	isDestNodeInAir?: boolean;
 	dash?: boolean;

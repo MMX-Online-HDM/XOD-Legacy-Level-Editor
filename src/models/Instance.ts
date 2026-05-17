@@ -366,11 +366,25 @@ export class Instance {
 					let jump: Instance = _.find(data.selectedLevel.instances, (instance) => {
 						return instance.name === neighbor.includeJumpZones;
 					});
-					let jrect = jump.getRect();
+					if (jump) {
+						let jrect = jump.getRect();
 
-					DrawWrappers.drawRect(
-						ctx, jrect, "red", "", 0, 0.25
-					);
+						DrawWrappers.drawRect(
+							ctx, jrect, "red", "", 0, 0.25
+						);
+					}
+				}
+				if (neighbor.excludeJumpZones) {
+					let jump: Instance = _.find(data.selectedLevel.instances, (instance) => {
+						return instance.name === neighbor.excludeJumpZones;
+					});
+					if (jump) {
+						let jrect = jump.getRect();
+
+						DrawWrappers.drawRect(
+							ctx, jrect, "red", "", 0, 0.25
+						);
+					}
 				}
 			}
 		}

@@ -316,7 +316,8 @@ export class Level {
 			// Just allow all to go over bounds if MirrorOnly or bigger is true.
 			if (instance.mirrorEnabled === MirrorEnabled.MirroredOnly ||
 				instance.mirrorEnabled === MirrorEnabled.KeepNonMirror ||
-				instance.mirrorEnabled === MirrorEnabled.KeepMirror
+				instance.mirrorEnabled === MirrorEnabled.KeepMirror ||
+				instance.mirrorEnabled === MirrorEnabled.DoNotMirror
 			) {
 				return true;
 			}
@@ -325,7 +326,7 @@ export class Level {
 				return true;
 			}
 			else {
-				if (instance.pos.x > clonedLevel.mirrorX) {
+				if (!instance.properties.doNotConnectIfMirrored && instance.pos.x > clonedLevel.mirrorX) {
 					// Special case: you want to support CP in a mirrored map.
 					// As CP is an asymmetrical mode, control points on the right
 					// side of mirror axis will not be deleted if flagged with MirroredOnly.
@@ -353,6 +354,7 @@ export class Level {
 				instance.properties?.doNotMirror === true ||
 				instance.obj?.disableMirroring == true ||
 				instance.mirrorEnabled === MirrorEnabled.KeepNonMirror ||
+				instance.mirrorEnabled === MirrorEnabled.DoNotMirror ||
 				!instance.isShape && instance.pos.x == clonedLevel.mirrorX
 			);
 			if (instance.obj?.disableMirroring == true &&
@@ -364,21 +366,29 @@ export class Level {
 				instancesNotToMirror.add(instance);
 			}
 			if (instance.points) {
-				if (Rect.isRectangle(instance.points)) {
-					// If a rectangular shape instance goes beyond the mirror X axis, increase its width so it covers both sides equally.
-					// Then flag it to not be mirrored as it would be redundant
-					let minX = _.minBy(instance.points, point => point.x).x;
-					for (let point of instance.points) {
-						if (point.x >= clonedLevel.mirrorX) {
-							point.x = clonedLevel.mirrorX + (clonedLevel.mirrorX - minX);
-							instancesNotToMirror.add(instance);
+				// We skip conecting stuff that has do-not-mirror flags.
+				// As is bound to mess up stuff.
+				if (!instance.properties.doNotConnectIfMirrored &&
+					instance.mirrorEnabled !== MirrorEnabled.KeepNonMirror &&
+					instance.mirrorEnabled !== MirrorEnabled.KeepMirror &&
+					instance.mirrorEnabled !== MirrorEnabled.DoNotMirror
+				) {
+					if (Rect.isRectangle(instance.points)) {
+						// If a rectangular shape instance goes beyond the mirror X axis, increase its width so it covers both sides equally.
+						// Then flag it to not be mirrored as it would be redundant
+						let minX = _.minBy(instance.points, point => point.x).x;
+						for (let point of instance.points) {
+							if (point.x >= clonedLevel.mirrorX) {
+								point.x = clonedLevel.mirrorX + (clonedLevel.mirrorX - minX);
+								instancesNotToMirror.add(instance);
+							}
 						}
 					}
-				}
-				else {
-					for (let point of instance.points) {
-						if (point.x >= clonedLevel.mirrorX) {
-							point.x = clonedLevel.mirrorX;
+					else {
+						for (let point of instance.points) {
+							if (point.x >= clonedLevel.mirrorX) {
+								point.x = clonedLevel.mirrorX;
+							}
 						}
 					}
 				}

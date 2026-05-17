@@ -320,6 +320,8 @@
 		{ "id": "parallaxIndex", "type": "num", "name": "Parallax Index", "default": -1 },
 		{ "id": "flipX", "type": "bool", "name": "Flip X", "alwaysMirror": true },
 		{ "id": "flipY", "type": "bool", "name": "Flip Y" },
+		{ "id": "onewayX", "type": "num", "name": "Oneway X", "mirror": true },
+		{ "id": "onewayY", "type": "num", "name": "Oneway Y" },
 		{ "id": "destructableFlag", "type": "mnum", "name": "Destructable Flag",
 			"options": [1, 2, 3, 4]
 		},
@@ -328,7 +330,8 @@
 		{ "id": "destroyInstanceName", "type": "str", "name": "Link Instances" },
 		{ "id": "gibSpriteName", "type": "str", "name": "Gib Sprite" },
 		{ "id": "respawnTime", "type": "num", "name": "Respawn Time", "default": -1 },
-		{ "id": "isGlass", "type": "bool", "name": "Glass" }
+		{ "id": "isGlass", "type": "bool", "name": "Glass" },
+		{ "id": "glassTimer", "type": "num", "name": "Glass Timer", "default": 1.5 }
 	]
 }, {
 	"name": "Moving Platform",
@@ -359,6 +362,8 @@
 		{ "id": "flipY", "type": "bool", "name": "Flip Y" },
 		{ "id": "flipXOnMoveLeft", "type": "bool", "name": "Flip X OnMove" },
 		{ "id": "flipYOnMoveUp", "type": "bool", "name": "Flip Y OnMove" },
+		{ "id": "onewayX", "type": "num", "name": "Oneway X", "mirror": true },
+		{ "id": "onewayY", "type": "num", "name": "Oneway Y" },
 		{ "id": "idleSpriteName",
 			"type": "mstr", "name": "Idle Sprite", "required": true,
 			"jsOptions": "return t.getMapSpriteOptions()"
