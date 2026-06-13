@@ -348,7 +348,7 @@
 			"cvArraySize": 3, "cvCoordColor": "red"
 		},
 		{ "id": "moveSpeed", "type": "num", "name": "Move Speed", "default": 50 },
-		{ "id": "timeOffset", "type": "mlstr", "name": "Time Offset"},
+		{ "id": "timeOffset", "type": "num", "name": "Time Offset"},
 		{ "id": "nodeName", "type": "str", "name": "Linked Node" },
 		{ "id": "killZoneName", "type": "str", "name": "Linked Kill Zone" },
 		{ "id": "zIndex",
